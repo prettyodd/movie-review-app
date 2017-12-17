@@ -13,7 +13,10 @@ mongoose.connect('mongodb://localhost/CRMdb', {
 const Routes = express.Router();
 
 Routes.get('/', (req, res) => {
-    res.send(`Node and express server is running`)
+    res.send(`api data render with mongoose`)
+});
+Routes.get('/movie', (req, res) => {
+    res.send('api data render with mongoose')
 });
 
 Routes.post('/', addNewUser);

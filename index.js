@@ -13,7 +13,12 @@ app.use(bodyParser.json());
 app.set('view engine', 'ejs');
 app.get('/', (req, res) => {
     res.render('home', {
-      content: 'Hello from ejs'
+      content: 'ejs render from server'
+    });
+});
+app.get('/movie', (req, res) => {
+    res.render('home', {
+      content: 'ejs render from server'
     });
 });
 
