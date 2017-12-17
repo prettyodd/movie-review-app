@@ -6,10 +6,10 @@ const User = mongoose.model('User', UserSchema);
 export const addNewUser = (req, res) => {
     let newUser = new User(req.body);
 
-    newUser.save((err, contact) => {
+    newUser.save((err, user) => {
         if (err) {
             res.send(err);
         }
-        res.json({});
+        res.json(user);
     });
 };

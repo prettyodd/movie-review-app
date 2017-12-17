@@ -1,7 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
-import routes from './src/mongoose/routes/crmRoutes';
+import Routes from './src/mongoose/routes/';
 
 const app = express();
 const PORT = 3000;
@@ -16,11 +16,16 @@ mongoose.connect('mongodb://localhost/CRMdb', {
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-routes(app);
+// routes with ejs
+app.set('view engine', 'ejs');
+app.get('/', (req, res) => {
+    res.render('home', {
+      content: 'Hello from ejs'
+    });
+});
 
-app.get('/', (req, res) =>
-res.send(`Node and express server is running on port ${PORT}`)
-);
+// api routes
+app.use('/api', Routes);
 
 app.listen(PORT, () =>
     console.log(`your server is running on port ${PORT}`)
