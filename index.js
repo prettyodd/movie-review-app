@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
     });
 });
 
-// api routes
+// api routes with mongoose
 app.use('/api', Routes);
 app.use(express.static('public'));
 
