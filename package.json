@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./index.js --exec babel-node -e js"
+    "start": "nodemon ./index.js --exec babel-node -e js",
+    "runmongo": "sudo service mongod start"
   },
   "author": "Harith Zahid",
   "license": "ISC",
@@ -18,7 +19,8 @@
     "mongoose": "^4.11.10",
     "nodemon": "^1.12.0",
     "react": "^16.2.0",
-    "react-dom": "^16.2.0"
+    "react-dom": "^16.2.0",
+    "react-autocomplete": "^1.7.2"
   },
   "devDependencies": {
     "babel-cli": "^6.16.0",

@@ -1,10 +1,13 @@
 import React from 'react';
+import MyInput from './searchMovie';
+import Test from './api'
 
 class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <h2>Home. Hello from React</h2>
+        <MyInput />
+        <Test />
       </div>
     );
   }
