@@ -7782,7 +7782,7 @@
 	        _react2.default.createElement(
 	          "h2",
 	          null,
-	          "Hello from React"
+	          "Home. Hello from React"
 	        )
 	      );
 	    }

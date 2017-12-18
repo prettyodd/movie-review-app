@@ -17,7 +17,7 @@ app.get('/', (req, res) => {
     });
 });
 app.get('/movie', (req, res) => {
-    res.render('home', {
+    res.render('movie', {
       content: 'ejs render from server'
     });
 });
