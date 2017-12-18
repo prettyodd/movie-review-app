@@ -9,14 +9,29 @@ class Test extends React.Component {
     constructor(props) {
       super(props)
       this.state = {
-      value: ''
+      value: '',
+      data: ''
       }
     }
+
     onChange(e) {
       this.setState({value: e.target.value })
+
+      if (this.state.value.length > 5) {
+        let e = this;
+        
+        axios.get(`https://api.themoviedb.org/3/search/movie?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US&query=${this.state.value}&page=1&include_adult=false`)
+        .then(function (response) {
+          e.setState({data: response})
+        })
+        .catch(function (error) {
+            console.log(error)
+        })
+      }
     }
 
     render () {
+        //Movie list: <code>{this.state.data}</code>
       return (
         <div>
           <input

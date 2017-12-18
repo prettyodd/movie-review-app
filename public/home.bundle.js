@@ -11327,7 +11327,8 @@
 	    var _this = _possibleConstructorReturn(this, (Test.__proto__ || Object.getPrototypeOf(Test)).call(this, props));
 	
 	    _this.state = {
-	      value: ''
+	      value: '',
+	      data: ''
 	    };
 	    return _this;
 	  }
@@ -11336,10 +11337,21 @@
 	    key: 'onChange',
 	    value: function onChange(e) {
 	      this.setState({ value: e.target.value });
+	
+	      if (this.state.value.length > 5) {
+	        var _e = this;
+	
+	        _axios2.default.get('https://api.themoviedb.org/3/search/movie?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US&query=' + this.state.value + '&page=1&include_adult=false').then(function (response) {
+	          _e.setState({ data: response });
+	        }).catch(function (error) {
+	          console.log(error);
+	        });
+	      }
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
+	      //Movie list: <code>{this.state.data}</code>
 	      return _react2.default.createElement(
 	        'div',
 	        null,
