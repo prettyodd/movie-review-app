@@ -7850,17 +7850,19 @@
 	  _createClass(SearchMovie, [{
 	    key: 'onChange',
 	    value: function onChange(e) {
-	      this.setState({ value: e.target.value });
 	
-	      if (this.state.value) {
-	        var _e = this;
+	      if (e.target.value) {
+	        // this must be assigned to other variables before used with axios
+	        var c = this;
+	        // react cannot access the event in an asynchronous way.
+	        var valueObj = e.target.value;
 	
-	        _axios2.default.get('https://api.themoviedb.org/3/search/movie?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US&query=' + this.state.value + '&page=1&include_adult=false').then(function (response) {
+	        _axios2.default.get('https://api.themoviedb.org/3/search/movie?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US&query=' + valueObj + '&page=1&include_adult=false').then(function (response) {
 	          var movie = [];
 	          for (var i = 0; i < 10; i++) {
 	            movie.push(response.data.results[i]);
 	          }
-	          _e.setState({ data: movie });
+	          c.setState({ data: movie, value: valueObj });
 	        }).catch(function (error) {
 	          console.log(error);
 	        });
@@ -9493,7 +9495,8 @@
 	                        null,
 	                        list.overview
 	                    )
-	                )
+	                ),
+	                _react2.default.createElement("input", { type: "button", onclick: "location.href='http://google.com';", value: "Go to Google" })
 	            );
 	        })
 	    );
