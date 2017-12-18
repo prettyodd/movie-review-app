@@ -1,13 +1,11 @@
 import React from 'react';
-import MyInput from './searchMovie';
-import Test from './api'
+import SearchMovie from './searchMovie';
 
 class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <MyInput />
-        <Test />
+        <SearchMovie />
       </div>
     );
   }

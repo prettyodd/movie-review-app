@@ -1,42 +1,46 @@
 import React from 'react';
-import ReactAutocomplete from 'react-autocomplete';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
+import MovieList from './movieList';
 
-class MyInput extends React.Component {
-    
-      constructor (props) {
-        super(props)
-        this.state = {
-          value: '',
-        }
+class SearchMovie extends React.Component {
+    constructor(props) {
+      super(props)
+      this.state = {
+        value: '',
+        data: []
       }
+    }
 
-      render() {
-        return (
-          <ReactAutocomplete
-            items={[
-            { id: 'foo', label: 'foo' },
-            { id: 'bar', label: 'bar' },
-            { id: 'baz', label: 'baz' },
-            ]}
-            shouldItemRender={(item, value) => item.label.toLowerCase().indexOf(value.toLowerCase()) > -1}
-            getItemValue={item => item.label}
-            renderItem={(item, highlighted) =>
-              <div
-                key={item.id}
-                style={{ backgroundColor: highlighted ? '#eee' : 'transparent'}}
-              >
-                {item.label}
-              </div>
-            }
-            value={this.state.value}
-            onChange={e => this.setState({ value: e.target.value })}
-            onSelect={value => this.setState({ value })}
-          />
-        )
+    onChange(e) {
+      this.setState({value: e.target.value })
+
+      if (this.state.value) {
+        let e = this;
+        
+        axios.get(`https://api.themoviedb.org/3/search/movie?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US&query=${this.state.value}&page=1&include_adult=false`)
+        .then(function (response) {
+          let movie = []
+          for (var i = 0; i < 10; i++) {
+            movie.push(response.data.results[i])
+          }
+          e.setState({data: movie})
+        })
+        .catch(function (error) {
+            console.log(error)
+        })
       }
+    }
+
+    render () {
+      return (
+        <div>
+          <input type="text" onChange={this.onChange.bind(this)}/>
+          <MovieList lists={this.state.data} />
+        </div>
+      )
+    }
 }
 
-export default MyInput;
+export default SearchMovie;
     
