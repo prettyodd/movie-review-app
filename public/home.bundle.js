@@ -7868,6 +7868,8 @@
 	        }).catch(function (error) {
 	          console.log(error);
 	        });
+	      } else {
+	        this.setState({ data: [] });
 	      }
 	    }
 	  }, {
