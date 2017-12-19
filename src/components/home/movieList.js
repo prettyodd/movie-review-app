@@ -11,7 +11,7 @@ const MovieList = ({ lists=[] }) => {
                         <h3>Synopsis</h3>
                         <p>{list.overview}</p>
                     </div>
-                    <input type="button" onclick="location.href='http://google.com';" value="Go to Google" />
+                    <a href={`/movie/${list.id}`} class="button">Review</a>
                 </div>
             )}
         </div>

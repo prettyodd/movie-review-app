@@ -1,13 +1,10 @@
 import React from 'react';
+import MainRoute from './mainRoute'
 
-class App extends React.Component {
-  render() {
-    return (
-      <div className="App">
-        <h2>Movie. Hello from React</h2>
-      </div>
-    );
-  }
-}
+const App = () => (
+  <div>
+    <MainRoute />
+  </div>
+)
 
 export default App;

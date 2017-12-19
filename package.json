@@ -19,8 +19,10 @@
     "mongoose": "^4.11.10",
     "nodemon": "^1.12.0",
     "react": "^16.2.0",
+    "react-autocomplete": "^1.7.2",
     "react-dom": "^16.2.0",
-    "react-autocomplete": "^1.7.2"
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2"
   },
   "devDependencies": {
     "babel-cli": "^6.16.0",

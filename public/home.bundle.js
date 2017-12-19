@@ -7846,6 +7846,8 @@
 	    };
 	    return _this;
 	  }
+	  // onChange function will be triggered every time onChange event(assigned to e) occur. target.value is the input value that trigger onChange event.
+	
 	
 	  _createClass(SearchMovie, [{
 	    key: 'onChange',
@@ -7854,7 +7856,7 @@
 	      if (e.target.value) {
 	        // this must be assigned to other variables before used with axios
 	        var c = this;
-	        // react cannot access the event in an asynchronous way.
+	        // cannot access the event in an asynchronous way(axios).
 	        var valueObj = e.target.value;
 	
 	        _axios2.default.get('https://api.themoviedb.org/3/search/movie?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US&query=' + valueObj + '&page=1&include_adult=false').then(function (response) {
@@ -9496,7 +9498,11 @@
 	                        list.overview
 	                    )
 	                ),
-	                _react2.default.createElement("input", { type: "button", onclick: "location.href='http://google.com';", value: "Go to Google" })
+	                _react2.default.createElement(
+	                    "a",
+	                    { href: "/movie/" + list.id, "class": "button" },
+	                    "Review"
+	                )
 	            );
 	        })
 	    );
