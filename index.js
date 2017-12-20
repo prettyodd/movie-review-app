@@ -16,11 +16,6 @@ app.get('/', (req, res) => {
       content: 'ejs render from server'
     });
 });
-app.get('/movie', (req, res) => {
-    res.render('movie', {
-      content: 'ejs render from server'
-    });
-});
 
 // api routes with mongoose
 app.use('/api', Routes);
