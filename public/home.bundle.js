@@ -14091,9 +14091,10 @@
 	        var _this = _possibleConstructorReturn(this, (GetMovie.__proto__ || Object.getPrototypeOf(GetMovie)).call(this, props));
 	
 	        _this.state = {
-	            loading: false,
+	            loading: true,
 	            movieId: [],
-	            review: false
+	            review: false,
+	            externalApiCall: false
 	        };
 	        return _this;
 	    }
@@ -14121,32 +14122,22 @@
 	            this.addReview(this.reviewRefs.value);
 	        }
 	    }, {
-	        key: 'componentWillMount',
-	        value: function componentWillMount() {
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
 	            var c = this;
 	            var movieId = [];
-	            this.setState({ loading: true });
+	            //this.setState({ loading: true })
 	
 	            _axios2.default.get('http://localhost:3000/api/movie/' + this.props.match.params.id).then(function (response) {
-	                console.log(response)(!response.data) ? _axios2.default.get('https://api.themoviedb.org/3/movie/' + c.props.match.params.id + '?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US').then(function (response) {
-	                    console.log(response);
+	                if (response.data) {
+	                    console.log(response.data);
 	                    movieId.push(response.data);
-	                    c.setState({ movieId: movieId });
-	                    c.setState({ loading: false });
-	                }).catch(function (error) {
-	                    console.log(error);
-	                }) : console.log(response);
-	                movieId.push(response.data);
-	                c.setState({ movieId: movieId });
-	                c.setState({ loading: false });
+	                    c.setState({ movieId: movieId, loading: false });
+	                } else {
+	                    c.setState({ externalApiCall: true });
+	                }
 	            }).catch(function (error) {
 	                console.log(error);
-	                _axios2.default.get('https://api.themoviedb.org/3/movie/' + c.props.match.params.id + '?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US').then(function (response) {
-	                    console.log(response);
-	                    movieId.push(response.data);
-	                    c.setState({ movieId: movieId });
-	                    c.setState({ loading: false });
-	                });
 	            });
 	
 	            if (!movieId) {
@@ -14155,6 +14146,22 @@
 	                    null,
 	                    'Sorry, but the movie was not found'
 	                );
+	            }
+	        }
+	    }, {
+	        key: 'componentDidUpdate',
+	        value: function componentDidUpdate() {
+	            if (this.state.externalApiCall) {
+	                var c = this;
+	                var movieId = [];
+	
+	                _axios2.default.get('https://api.themoviedb.org/3/movie/' + this.props.match.params.id + '?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US').then(function (response) {
+	                    console.log(response.data);
+	                    movieId.push(response.data);
+	                    c.setState({ movieId: movieId, loading: false, externalApiCall: false });
+	                }).catch(function (error) {
+	                    console.log(error);
+	                });
 	            }
 	        }
 	    }, {
