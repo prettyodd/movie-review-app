@@ -2,6 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 import MovieList from './movieList';
+import GetMovie from './getMovie'
+import {
+  Route,
+  Link,
+  Switch
+} from 'react-router-dom'
 
 class SearchMovie extends React.Component {
     constructor(props) {
@@ -37,11 +43,20 @@ class SearchMovie extends React.Component {
     }
 
     render () {
-      return (
+      const Home = () => (
         <div>
           <input type="text" onChange={this.onChange.bind(this)}/>
           <MovieList lists={this.state.data} />
         </div>
+      )
+
+      return (
+        <main>
+          <Switch>
+            <Route exact path='/' component={Home}/>
+            <Route path='/movie/:id' component={GetMovie}/>
+          </Switch>
+        </main>
       )
     }
 }

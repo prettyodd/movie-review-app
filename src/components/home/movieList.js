@@ -1,4 +1,7 @@
 import React from 'react';
+import {
+    Link
+  } from 'react-router-dom'
 
 const MovieList = ({ lists=[] }) => {
     return (
@@ -11,7 +14,7 @@ const MovieList = ({ lists=[] }) => {
                         <h3>Synopsis</h3>
                         <p>{list.overview}</p>
                     </div>
-                    <a href={`/movie/${list.id}`} class="button">Review</a>
+                    <Link to={`/movie/${list.id}`}>Review</Link>
                 </div>
             )}
         </div>

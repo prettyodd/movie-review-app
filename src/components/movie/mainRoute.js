@@ -5,7 +5,7 @@ import {
   Link,
   Switch
 } from 'react-router-dom'
-import GetMovie from './getMovie'
+//import GetMovie from './getMovie'
 
 class MainRoute extends React.Component {
     
