@@ -1,5 +1,6 @@
 import React from 'react'
 import axios from 'axios'
+import ReviewForm from './reviewForm'
 
 class GetMovie extends React.Component {
 
@@ -8,18 +9,21 @@ class GetMovie extends React.Component {
         this.state = {
           loading: false,
           movieId: [],
+          review: false,
         }
     }
 
     addReview(review) {
         let c = this
         axios.post(`http://localhost:3000/api/movie/${this.props.match.params.id}`, {
+            id: c.props.match.params.id,
             title: c.state.movieId[0].title,
             overview: c.state.movieId[0].overview,
             review: review
         })
         .then(function (response) {
             console.log(response)
+            c.setState({ review: true })
         })
         .catch(function (error) {
             console.log(error)
@@ -28,8 +32,9 @@ class GetMovie extends React.Component {
 
     onSubmit(e) {
         e.preventDefault();
-        this.addReview(this.refs.reviewInput.value)
+        this.addReview(this.reviewRefs.value)
     }
+
     componentWillMount() {
         let c = this
         let movieId = []
@@ -51,32 +56,38 @@ class GetMovie extends React.Component {
     }
     
     render () {
+
         if (this.state.loading) {
             return (<h2>Loading...</h2>)
-        }
-        return (
-            <div>
-            <div>
-                <h1>{this.state.movieId[0].title}</h1>
-                <h2>Synopsis:</h2> 
-                <p>{this.state.movieId[0].overview}</p>
-            </div>
-            <form onSubmit={this.onSubmit.bind(this)}>
-                <div className="review-form">
-                  <textarea 
-                     type="text"
-                     placeholder="Write your review..."
-                     ref="reviewInput"
-                     className="form-control" />
-                  <span className="input-group-btn">
-                    <button type="submit" className="btn btn-info">
-                       Sumbit
-                    </button>
-                  </span>
+        } else if (this.state.review) {
+            return (
+                <div>
+                    <div>
+                        <h1>{this.state.movieId[0].title}</h1>
+                        <h2>Synopsis:</h2> 
+                        <p>{this.state.movieId[0].overview}</p>
+                    </div>
+                    <div>
+                        <h3>Your review:</h3>
+                        <p>Review content</p>
+                    </div>
                 </div>
-            </form>
-            </div>
-        )
+            )
+        } else {
+            return (
+                <div>
+                    <div>
+                        <h1>{this.state.movieId[0].title}</h1>
+                        <h2>Synopsis:</h2> 
+                        <p>{this.state.movieId[0].overview}</p>
+                    </div>
+                    <ReviewForm 
+                        onSubmit={(e)=> this.onSubmit(e)}
+                        ref={input => this.reviewRefs = input}
+                    />
+                </div>
+            )
+        }
     }
 }
 

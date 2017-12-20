@@ -14070,6 +14070,10 @@
 	
 	var _axios2 = _interopRequireDefault(_axios);
 	
+	var _reviewForm = __webpack_require__(/*! ./reviewForm */ 98);
+	
+	var _reviewForm2 = _interopRequireDefault(_reviewForm);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -14088,7 +14092,8 @@
 	
 	        _this.state = {
 	            loading: false,
-	            movieId: []
+	            movieId: [],
+	            review: false
 	        };
 	        return _this;
 	    }
@@ -14098,11 +14103,13 @@
 	        value: function addReview(review) {
 	            var c = this;
 	            _axios2.default.post('http://localhost:3000/api/movie/' + this.props.match.params.id, {
+	                id: c.props.match.params.id,
 	                title: c.state.movieId[0].title,
 	                overview: c.state.movieId[0].overview,
 	                review: review
 	            }).then(function (response) {
 	                console.log(response);
+	                c.setState({ review: true });
 	            }).catch(function (error) {
 	                console.log(error);
 	            });
@@ -14111,7 +14118,7 @@
 	        key: 'onSubmit',
 	        value: function onSubmit(e) {
 	            e.preventDefault();
-	            this.addReview(this.refs.reviewInput.value);
+	            this.addReview(this.reviewRefs.value);
 	        }
 	    }, {
 	        key: 'componentWillMount',
@@ -14139,58 +14146,85 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
+	            var _this2 = this;
+	
 	            if (this.state.loading) {
 	                return _react2.default.createElement(
 	                    'h2',
 	                    null,
 	                    'Loading...'
 	                );
-	            }
-	            return _react2.default.createElement(
-	                'div',
-	                null,
-	                _react2.default.createElement(
+	            } else if (this.state.review) {
+	                return _react2.default.createElement(
 	                    'div',
 	                    null,
 	                    _react2.default.createElement(
-	                        'h1',
+	                        'div',
 	                        null,
-	                        this.state.movieId[0].title
+	                        _react2.default.createElement(
+	                            'h1',
+	                            null,
+	                            this.state.movieId[0].title
+	                        ),
+	                        _react2.default.createElement(
+	                            'h2',
+	                            null,
+	                            'Synopsis:'
+	                        ),
+	                        _react2.default.createElement(
+	                            'p',
+	                            null,
+	                            this.state.movieId[0].overview
+	                        )
 	                    ),
-	                    _react2.default.createElement(
-	                        'h2',
-	                        null,
-	                        'Synopsis:'
-	                    ),
-	                    _react2.default.createElement(
-	                        'p',
-	                        null,
-	                        this.state.movieId[0].overview
-	                    )
-	                ),
-	                _react2.default.createElement(
-	                    'form',
-	                    { onSubmit: this.onSubmit.bind(this) },
 	                    _react2.default.createElement(
 	                        'div',
-	                        { className: 'review-form' },
-	                        _react2.default.createElement('textarea', {
-	                            type: 'text',
-	                            placeholder: 'Write your review...',
-	                            ref: 'reviewInput',
-	                            className: 'form-control' }),
+	                        null,
 	                        _react2.default.createElement(
-	                            'span',
-	                            { className: 'input-group-btn' },
-	                            _react2.default.createElement(
-	                                'button',
-	                                { type: 'submit', className: 'btn btn-info' },
-	                                'Sumbit'
-	                            )
+	                            'h3',
+	                            null,
+	                            'Your review:'
+	                        ),
+	                        _react2.default.createElement(
+	                            'p',
+	                            null,
+	                            'Review content'
 	                        )
 	                    )
-	                )
-	            );
+	                );
+	            } else {
+	                return _react2.default.createElement(
+	                    'div',
+	                    null,
+	                    _react2.default.createElement(
+	                        'div',
+	                        null,
+	                        _react2.default.createElement(
+	                            'h1',
+	                            null,
+	                            this.state.movieId[0].title
+	                        ),
+	                        _react2.default.createElement(
+	                            'h2',
+	                            null,
+	                            'Synopsis:'
+	                        ),
+	                        _react2.default.createElement(
+	                            'p',
+	                            null,
+	                            this.state.movieId[0].overview
+	                        )
+	                    ),
+	                    _react2.default.createElement(_reviewForm2.default, {
+	                        onSubmit: function onSubmit(e) {
+	                            return _this2.onSubmit(e);
+	                        },
+	                        ref: function ref(input) {
+	                            return _this2.reviewRefs = input;
+	                        }
+	                    })
+	                );
+	            }
 	        }
 	    }]);
 	
@@ -14198,6 +14232,79 @@
 	}(_react2.default.Component);
 	
 	exports.default = GetMovie;
+
+/***/ }),
+/* 98 */
+/*!*******************************************!*\
+  !*** ./src/components/home/reviewForm.js ***!
+  \*******************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var ReviewForm = function (_React$Component) {
+	    _inherits(ReviewForm, _React$Component);
+	
+	    function ReviewForm() {
+	        _classCallCheck(this, ReviewForm);
+	
+	        return _possibleConstructorReturn(this, (ReviewForm.__proto__ || Object.getPrototypeOf(ReviewForm)).apply(this, arguments));
+	    }
+	
+	    _createClass(ReviewForm, [{
+	        key: "render",
+	        value: function render() {
+	            var _this2 = this;
+	
+	            return _react2.default.createElement(
+	                "form",
+	                { onSubmit: this.props.onSubmit },
+	                _react2.default.createElement(
+	                    "div",
+	                    { className: "review-form" },
+	                    _react2.default.createElement("textarea", {
+	                        type: "text",
+	                        placeholder: "Write your review...",
+	                        ref: function ref(input) {
+	                            return _this2.reviewRefs = input;
+	                        },
+	                        className: "form-control" }),
+	                    _react2.default.createElement(
+	                        "span",
+	                        { className: "input-group-btn" },
+	                        _react2.default.createElement(
+	                            "button",
+	                            { type: "submit", className: "btn btn-info" },
+	                            "Sumbit"
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return ReviewForm;
+	}(_react2.default.Component);
+	
+	exports.default = ReviewForm;
 
 /***/ })
 /******/ ]);
