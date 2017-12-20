@@ -5,6 +5,10 @@ class ReviewForm extends React.Component {
         return (
             <form onSubmit={this.props.onSubmit}>
                 <div className="review-form">
+                <input 
+                    type="text" 
+                    placeholder="Username" 
+                    ref={input => this.usernameRefs = input} />
                   <textarea 
                      type="text"
                      placeholder="Write your review..."

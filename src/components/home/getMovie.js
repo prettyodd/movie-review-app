@@ -14,26 +14,33 @@ class GetMovie extends React.Component {
         }
     }
 
-    addReview(review) {
+    addReview(username, review) {
         let c = this
         axios.post(`http://localhost:3000/api/movie/${this.props.match.params.id}`, {
             id: c.props.match.params.id,
             title: c.state.movieId[0].title,
             overview: c.state.movieId[0].overview,
-            review: review
+            reviews: [
+                {
+                    user: username,
+                    review: review
+                }
+            ]
         })
         .then(function (response) {
             console.log(response)
-            c.setState({ review: true })
+            let movieId = []
+            movieId.push(response.data)
+            c.setState({ loading: false, review: true, movieId: movieId})
         })
         .catch(function (error) {
             console.log(error)
         }) 
     }
-
+//great
     onSubmit(e) {
         e.preventDefault();
-        this.addReview(this.reviewRefs.value)
+        this.addReview(this.refs.usernameRefs.value, this.refs.reviewRefs.value)
     }
 
     componentDidMount() {
@@ -44,7 +51,6 @@ class GetMovie extends React.Component {
         axios.get(`http://localhost:3000/api/movie/${this.props.match.params.id}`)
             .then(function (response) {
                 if (response.data) {
-                    console.log(response.data)
                     movieId.push(response.data)
                     c.setState({ movieId: movieId, loading: false })
                 } else {
@@ -67,7 +73,6 @@ class GetMovie extends React.Component {
 
             axios.get(`https://api.themoviedb.org/3/movie/${this.props.match.params.id}?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US`)
             .then(function (response) {
-                console.log(response.data)
                 movieId.push(response.data)
                 c.setState({ movieId: movieId, loading: false, externalApiCall: false })
             })
@@ -90,8 +95,9 @@ class GetMovie extends React.Component {
                         <p>{this.state.movieId[0].overview}</p>
                     </div>
                     <div>
+                        <p>You logged in as: {this.state.movieId[0].reviews[0].user}</p>
                         <h3>Your review:</h3>
-                        <p>Review content</p>
+                        <p>{this.state.movieId[0].reviews[0].review}</p>
                     </div>
                 </div>
             )
@@ -103,10 +109,24 @@ class GetMovie extends React.Component {
                         <h2>Synopsis:</h2> 
                         <p>{this.state.movieId[0].overview}</p>
                     </div>
-                    <ReviewForm 
-                        onSubmit={(e)=> this.onSubmit(e)}
-                        ref={input => this.reviewRefs = input}
-                    />
+
+                    <form onSubmit={this.onSubmit.bind(this)}>
+                        <div className="review-form">
+                        <input 
+                            type="text"
+                            placeholder="Username"
+                            ref="usernameRefs" />
+                        <textarea 
+                            type="text"
+                            placeholder="Write your review..."
+                            ref="reviewRefs"/>
+                        <span className="input-group-btn">
+                          <button type="submit" className="btn btn-info">
+                             Sumbit
+                          </button>
+                        </span>
+                        </div>
+                    </form>
                 </div>
             )
         }

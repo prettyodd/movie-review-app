@@ -14101,25 +14101,32 @@
 	
 	    _createClass(GetMovie, [{
 	        key: 'addReview',
-	        value: function addReview(review) {
+	        value: function addReview(username, review) {
 	            var c = this;
 	            _axios2.default.post('http://localhost:3000/api/movie/' + this.props.match.params.id, {
 	                id: c.props.match.params.id,
 	                title: c.state.movieId[0].title,
 	                overview: c.state.movieId[0].overview,
-	                review: review
+	                reviews: [{
+	                    user: username,
+	                    review: review
+	                }]
 	            }).then(function (response) {
 	                console.log(response);
-	                c.setState({ review: true });
+	                var movieId = [];
+	                movieId.push(response.data);
+	                c.setState({ loading: false, review: true, movieId: movieId });
 	            }).catch(function (error) {
 	                console.log(error);
 	            });
 	        }
+	        //great
+	
 	    }, {
 	        key: 'onSubmit',
 	        value: function onSubmit(e) {
 	            e.preventDefault();
-	            this.addReview(this.reviewRefs.value);
+	            this.addReview(this.refs.usernameRefs.value, this.refs.reviewRefs.value);
 	        }
 	    }, {
 	        key: 'componentDidMount',
@@ -14130,7 +14137,6 @@
 	
 	            _axios2.default.get('http://localhost:3000/api/movie/' + this.props.match.params.id).then(function (response) {
 	                if (response.data) {
-	                    console.log(response.data);
 	                    movieId.push(response.data);
 	                    c.setState({ movieId: movieId, loading: false });
 	                } else {
@@ -14156,7 +14162,6 @@
 	                var movieId = [];
 	
 	                _axios2.default.get('https://api.themoviedb.org/3/movie/' + this.props.match.params.id + '?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US').then(function (response) {
-	                    console.log(response.data);
 	                    movieId.push(response.data);
 	                    c.setState({ movieId: movieId, loading: false, externalApiCall: false });
 	                }).catch(function (error) {
@@ -14167,7 +14172,6 @@
 	    }, {
 	        key: 'render',
 	        value: function render() {
-	            var _this2 = this;
 	
 	            if (this.state.loading) {
 	                return _react2.default.createElement(
@@ -14202,6 +14206,12 @@
 	                        'div',
 	                        null,
 	                        _react2.default.createElement(
+	                            'p',
+	                            null,
+	                            'You logged in as: ',
+	                            this.state.movieId[0].reviews[0].user
+	                        ),
+	                        _react2.default.createElement(
 	                            'h3',
 	                            null,
 	                            'Your review:'
@@ -14209,7 +14219,7 @@
 	                        _react2.default.createElement(
 	                            'p',
 	                            null,
-	                            'Review content'
+	                            this.state.movieId[0].reviews[0].review
 	                        )
 	                    )
 	                );
@@ -14236,14 +14246,31 @@
 	                            this.state.movieId[0].overview
 	                        )
 	                    ),
-	                    _react2.default.createElement(_reviewForm2.default, {
-	                        onSubmit: function onSubmit(e) {
-	                            return _this2.onSubmit(e);
-	                        },
-	                        ref: function ref(input) {
-	                            return _this2.reviewRefs = input;
-	                        }
-	                    })
+	                    _react2.default.createElement(
+	                        'form',
+	                        { onSubmit: this.onSubmit.bind(this) },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'review-form' },
+	                            _react2.default.createElement('input', {
+	                                type: 'text',
+	                                placeholder: 'Username',
+	                                ref: 'usernameRefs' }),
+	                            _react2.default.createElement('textarea', {
+	                                type: 'text',
+	                                placeholder: 'Write your review...',
+	                                ref: 'reviewRefs' }),
+	                            _react2.default.createElement(
+	                                'span',
+	                                { className: 'input-group-btn' },
+	                                _react2.default.createElement(
+	                                    'button',
+	                                    { type: 'submit', className: 'btn btn-info' },
+	                                    'Sumbit'
+	                                )
+	                            )
+	                        )
+	                    )
 	                );
 	            }
 	        }
@@ -14301,6 +14328,12 @@
 	                _react2.default.createElement(
 	                    "div",
 	                    { className: "review-form" },
+	                    _react2.default.createElement("input", {
+	                        type: "text",
+	                        placeholder: "Username",
+	                        ref: function ref(input) {
+	                            return _this2.usernameRefs = input;
+	                        } }),
 	                    _react2.default.createElement("textarea", {
 	                        type: "text",
 	                        placeholder: "Write your review...",
