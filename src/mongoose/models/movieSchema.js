@@ -11,5 +11,9 @@ export const MovieSchema = new Schema({
     },
     review: {
         type: String
+    },
+    _id: {
+        type: String,
+        unique: true
     }
 });

@@ -26,3 +26,12 @@ export const addNewMovie = (req, res) => {
         res.json(movie)
     })
 }
+
+export const loadSingleMovieData = (req, res) => {
+    Movie.findById(req.params._id, (err, movie) => {
+        if (err) {
+            res.send(err);
+        }
+        res.json(movie);
+    });
+}

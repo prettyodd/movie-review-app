@@ -40,14 +40,34 @@ class GetMovie extends React.Component {
         let movieId = []
         this.setState({ loading: true })
 
-        axios.get(`https://api.themoviedb.org/3/movie/${this.props.match.params.id}?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US`)
+        axios.get(`http://localhost:3000/api/movie/${this.props.match.params.id}`)
             .then(function (response) {
-                movieId.push(response.data)
-                c.setState({ movieId: movieId })
-                c.setState({ loading: false })
+                console.log(response)
+                (!response.data) ?
+                    axios.get(`https://api.themoviedb.org/3/movie/${c.props.match.params.id}?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US`)
+                    .then(function (response) {
+                            console.log(response)
+                            movieId.push(response.data)
+                            c.setState({ movieId: movieId })
+                            c.setState({ loading: false })
+                    })
+                    .catch(function (error) {
+                        console.log(error)
+                    })
+                    : console.log(response)
+                      movieId.push(response.data)
+                      c.setState({ movieId: movieId })
+                      c.setState({ loading: false })
             })
             .catch(function (error) {
                 console.log(error)
+                axios.get(`https://api.themoviedb.org/3/movie/${c.props.match.params.id}?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US`)
+                .then(function (response) {
+                        console.log(response)
+                        movieId.push(response.data)
+                        c.setState({ movieId: movieId })
+                        c.setState({ loading: false })
+                })
             })
 
         if (!movieId) {
