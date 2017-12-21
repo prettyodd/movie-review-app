@@ -1,6 +1,9 @@
 import React from 'react'
 import axios from 'axios'
 import ReviewForm from './reviewForm'
+import {
+    Link
+  } from 'react-router-dom'
 
 class GetMovie extends React.Component {
 
@@ -53,6 +56,7 @@ class GetMovie extends React.Component {
                 if (response.data) {
                     movieId.push(response.data)
                     c.setState({ movieId: movieId, loading: false })
+                    console.log('request made from local db')
                 } else {
                     c.setState({ externalApiCall: true })
                 }
@@ -75,6 +79,7 @@ class GetMovie extends React.Component {
             .then(function (response) {
                 movieId.push(response.data)
                 c.setState({ movieId: movieId, loading: false, externalApiCall: false })
+                console.log('request made from external db')
             })
             .catch(function (error) {
                 console.log(error)
@@ -98,6 +103,7 @@ class GetMovie extends React.Component {
                         <p>You logged in as: {this.state.movieId[0].reviews[0].user}</p>
                         <h3>Your review:</h3>
                         <p>{this.state.movieId[0].reviews[0].review}</p>
+                        <Link to={`/movie/${this.props.match.params.id}/${this.state.movieId[0].reviews[0]._id}`}>edit</Link>
                     </div>
                 </div>
             )
@@ -127,6 +133,11 @@ class GetMovie extends React.Component {
                         </span>
                         </div>
                     </form>
+
+                    <div>
+                        <p>Review list:</p>
+                        <p>{this.state.movieId[0].reviews[0].review} by {this.state.movieId[0].reviews[0].user}</p>
+                    </div>
                 </div>
             )
         }

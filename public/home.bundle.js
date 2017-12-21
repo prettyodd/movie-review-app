@@ -7764,13 +7764,24 @@
 	
 	var _searchMovie2 = _interopRequireDefault(_searchMovie);
 	
+	var _getMovie = __webpack_require__(/*! ./getMovie */ 97);
+	
+	var _getMovie2 = _interopRequireDefault(_getMovie);
+	
+	var _reactRouterDom = __webpack_require__(/*! react-router-dom */ 56);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var App = function App() {
 	  return _react2.default.createElement(
 	    'div',
 	    null,
-	    _react2.default.createElement(_searchMovie2.default, null)
+	    _react2.default.createElement(
+	      _reactRouterDom.Switch,
+	      null,
+	      _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/', component: _searchMovie2.default }),
+	      _react2.default.createElement(_reactRouterDom.Route, { path: '/movie/:id', component: _getMovie2.default })
+	    )
 	  );
 	};
 	
@@ -7854,6 +7865,7 @@
 	            movie.push(response.data.results[i]);
 	          }
 	          c.setState({ data: movie, value: valueObj });
+	          console.log(c.state.data);
 	        }).catch(function (error) {
 	          console.log(error);
 	        });
@@ -7864,26 +7876,11 @@
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _this2 = this;
-	
-	      var Home = function Home() {
-	        return _react2.default.createElement(
-	          'div',
-	          null,
-	          _react2.default.createElement('input', { type: 'text', onChange: _this2.onChange.bind(_this2) }),
-	          _react2.default.createElement(_movieList2.default, { lists: _this2.state.data })
-	        );
-	      };
-	
 	      return _react2.default.createElement(
-	        'main',
+	        'div',
 	        null,
-	        _react2.default.createElement(
-	          _reactRouterDom.Switch,
-	          null,
-	          _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/', component: Home }),
-	          _react2.default.createElement(_reactRouterDom.Route, { path: '/movie/:id', component: _getMovie2.default })
-	        )
+	        _react2.default.createElement('input', { type: 'text', onChange: this.onChange.bind(this) }),
+	        _react2.default.createElement(_movieList2.default, { lists: this.state.data })
 	      );
 	    }
 	  }]);
@@ -14074,6 +14071,8 @@
 	
 	var _reviewForm2 = _interopRequireDefault(_reviewForm);
 	
+	var _reactRouterDom = __webpack_require__(/*! react-router-dom */ 56);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -14139,6 +14138,7 @@
 	                if (response.data) {
 	                    movieId.push(response.data);
 	                    c.setState({ movieId: movieId, loading: false });
+	                    console.log('request made from local db');
 	                } else {
 	                    c.setState({ externalApiCall: true });
 	                }
@@ -14164,6 +14164,7 @@
 	                _axios2.default.get('https://api.themoviedb.org/3/movie/' + this.props.match.params.id + '?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US').then(function (response) {
 	                    movieId.push(response.data);
 	                    c.setState({ movieId: movieId, loading: false, externalApiCall: false });
+	                    console.log('request made from external db');
 	                }).catch(function (error) {
 	                    console.log(error);
 	                });
@@ -14220,6 +14221,11 @@
 	                            'p',
 	                            null,
 	                            this.state.movieId[0].reviews[0].review
+	                        ),
+	                        _react2.default.createElement(
+	                            _reactRouterDom.Link,
+	                            { to: '/movie/' + this.props.match.params.id + '/' + this.state.movieId[0].reviews[0]._id },
+	                            'edit'
 	                        )
 	                    )
 	                );
@@ -14269,6 +14275,22 @@
 	                                    'Sumbit'
 	                                )
 	                            )
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'div',
+	                        null,
+	                        _react2.default.createElement(
+	                            'p',
+	                            null,
+	                            'Review list:'
+	                        ),
+	                        _react2.default.createElement(
+	                            'p',
+	                            null,
+	                            this.state.movieId[0].reviews[0].review,
+	                            ' by ',
+	                            this.state.movieId[0].reviews[0].user
 	                        )
 	                    )
 	                );

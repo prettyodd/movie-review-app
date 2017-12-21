@@ -33,6 +33,7 @@ class SearchMovie extends React.Component {
               movie.push(response.data.results[i])
             }
             c.setState({data: movie, value: valueObj})
+            console.log(c.state.data)
           })
           .catch(function (error) {
               console.log(error)
@@ -43,20 +44,11 @@ class SearchMovie extends React.Component {
     }
 
     render () {
-      const Home = () => (
+      return (
         <div>
           <input type="text" onChange={this.onChange.bind(this)}/>
           <MovieList lists={this.state.data} />
         </div>
-      )
-
-      return (
-        <main>
-          <Switch>
-            <Route exact path='/' component={Home}/>
-            <Route path='/movie/:id' component={GetMovie}/>
-          </Switch>
-        </main>
       )
     }
 }

@@ -3,7 +3,8 @@ import mongoose from 'mongoose';
 import { 
     addNewUser,
     addNewMovie,
-    loadSingleMovieData
+    loadSingleMovieData,
+    editReview
 } from '../controllers/userController';
 
 // mongoose setuo
@@ -27,5 +28,6 @@ Routes.get('/movie', (req, res) => {
 
 Routes.get('/movie/:id', loadSingleMovieData)
 Routes.post('/movie/:id', addNewMovie)
+Routes.put('/movie/:id/:_id', editReview)
 
 export default Routes;

@@ -28,10 +28,19 @@ export const addNewMovie = (req, res) => {
 }
 
 export const loadSingleMovieData = (req, res) => {
-    Movie.findById(req.params._id, (err, movie) => {
+    Movie.findOne({id: req.params.id}, (err, movie) => {
         if (err) {
             res.send(err);
         }
         res.json(movie);
     });
+}
+
+export const editReview = (req, res) => {
+    Contact.findOneAndUpdate({ id: req.params.id, _id: req.params._id}, req.body, { new: true }, (err, movie) => {
+        if (err) {
+            res.send(err);
+        }
+        res.json(movie);
+    })
 }
