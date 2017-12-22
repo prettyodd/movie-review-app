@@ -1,6 +1,12 @@
 import React from 'react'
 
 class ReviewForm extends React.Component {
+
+    onSubmit(e) {
+        e.preventDefault();
+        this.addReview(this.refs.usernameRefs.value, this.refs.reviewRefs.value)
+    }
+
     render() {
         return (
             <form onSubmit={this.props.onSubmit}>
@@ -8,11 +14,11 @@ class ReviewForm extends React.Component {
                 <input 
                     type="text" 
                     placeholder="Username" 
-                    ref={input => this.usernameRefs = input} />
+                    ref="usernameRefs" />
                   <textarea 
                      type="text"
                      placeholder="Write your review..."
-                     ref={input => this.reviewRefs = input}
+                     ref="reviewRefs"
                      className="form-control" />
                   <span className="input-group-btn">
                     <button type="submit" className="btn btn-info">
