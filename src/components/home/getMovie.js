@@ -14,7 +14,7 @@ class GetMovie extends React.Component {
         super(props)
         this.state = {
           loading: true,
-          movie: ''
+          movie: '',
           userReview: false,
           externalApiCall: false,
           emptyReview: true
@@ -25,8 +25,8 @@ class GetMovie extends React.Component {
         let c = this
         axios.post(`http://localhost:3000/api/movie/${this.props.match.params.id}`, {
             id: c.props.match.params.id,
-            title: c.state.movie[0].title,
-            overview: c.state.movie[0].overview,
+            title: c.state.movie.title,
+            overview: c.state.movie.overview,
             reviews: [
                 {
                     user: username,
@@ -36,9 +36,7 @@ class GetMovie extends React.Component {
         })
         .then(function (response) {
             console.log(response)
-            let movie = []
-            movie = response.data
-            c.setState({ loading: false, userReview: true, movie: movie})
+            c.setState({ movie: response.data, loading: false, userReview: true })
         })
         .catch(function (error) {
             console.log(error)
@@ -47,13 +45,11 @@ class GetMovie extends React.Component {
 
     componentDidMount() {
         let c = this
-        let movie = []
 
         axios.get(`http://localhost:3000/api/movie/${this.props.match.params.id}`) // check if movie exist in local database..
             .then(function (response) {
                 if (response.data) {
-                    movie.push(response.data)
-                    c.setState({ movie: movie, loading: false })
+                    c.setState({ movie: response.data, loading: false })
                     console.log('request made from local db')
                 } else {
                     c.setState({ externalApiCall: true }) // ..if not, allow for the GET request for external database
@@ -63,7 +59,7 @@ class GetMovie extends React.Component {
                 console.log(error)
             })
 
-        if (!movie) {
+        if (!this.state.movie) {
           return <div>Sorry, but the movie was not found</div>
         }
     }
@@ -71,13 +67,12 @@ class GetMovie extends React.Component {
     componentDidUpdate() { 
         if (this.state.externalApiCall) {
             let c = this
-            let movie = []
 
             axios.get(`https://api.themoviedb.org/3/movie/${this.props.match.params.id}?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US`) // Get data from external database
             .then(function (response) {
-                movie.push(response.data)
-                c.setState({ movie: movie, loading: false, externalApiCall: false })
+                c.setState({ movie: response.data, loading: false, externalApiCall: false })
                 console.log('request made from external db')
+                //if (response.data.reviews)
             })
             .catch(function (error) {
                 console.log(error)
@@ -101,8 +96,8 @@ class GetMovie extends React.Component {
         }
     }
 
-    emptyReview() { // if false (review completely empty, which mean no ever post a review, or all review has been deleted)
-        if (!this.state.emptyReview) { 
+    emptyReview() { // if review exist
+        if (this.state.movie.reviews) { 
             return (<ReviewList movie={this.state.movie} />)
         } else {
             return (<p>No review yet.</p>)
@@ -111,7 +106,7 @@ class GetMovie extends React.Component {
     
     render () {
         return (
-            <div classname="App">
+            <div className="App">
                 {this.loading()}
                 {this.userReview()}
                 {this.emptyReview()}

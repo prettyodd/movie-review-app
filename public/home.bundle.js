@@ -7764,7 +7764,7 @@
 	
 	var _searchMovie2 = _interopRequireDefault(_searchMovie);
 	
-	var _getMovie = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./getMovie\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var _getMovie = __webpack_require__(/*! ./getMovie */ 97);
 	
 	var _getMovie2 = _interopRequireDefault(_getMovie);
 	
@@ -7818,7 +7818,7 @@
 	
 	var _movieList2 = _interopRequireDefault(_movieList);
 	
-	var _getMovie = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./getMovie\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var _getMovie = __webpack_require__(/*! ./getMovie */ 97);
 	
 	var _getMovie2 = _interopRequireDefault(_getMovie);
 	
@@ -14040,6 +14040,416 @@
 	
 	    return targetComponent;
 	};
+
+/***/ }),
+/* 97 */
+/*!*****************************************!*\
+  !*** ./src/components/home/getMovie.js ***!
+  \*****************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _axios = __webpack_require__(/*! axios */ 29);
+	
+	var _axios2 = _interopRequireDefault(_axios);
+	
+	var _reviewForm = __webpack_require__(/*! ./reviewForm */ 98);
+	
+	var _reviewForm2 = _interopRequireDefault(_reviewForm);
+	
+	var _reactRouterDom = __webpack_require__(/*! react-router-dom */ 56);
+	
+	var _movieHeader = __webpack_require__(/*! ./movieHeader */ 99);
+	
+	var _movieHeader2 = _interopRequireDefault(_movieHeader);
+	
+	var _reviewBody = __webpack_require__(/*! ./reviewBody */ 100);
+	
+	var _reviewBody2 = _interopRequireDefault(_reviewBody);
+	
+	var _reviewList = __webpack_require__(/*! ./reviewList */ 101);
+	
+	var _reviewList2 = _interopRequireDefault(_reviewList);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var GetMovie = function (_React$Component) {
+	    _inherits(GetMovie, _React$Component);
+	
+	    function GetMovie(props) {
+	        _classCallCheck(this, GetMovie);
+	
+	        var _this = _possibleConstructorReturn(this, (GetMovie.__proto__ || Object.getPrototypeOf(GetMovie)).call(this, props));
+	
+	        _this.addReview = function (username, review) {
+	            var c = _this;
+	            _axios2.default.post('http://localhost:3000/api/movie/' + _this.props.match.params.id, {
+	                id: c.props.match.params.id,
+	                title: c.state.movie.title,
+	                overview: c.state.movie.overview,
+	                reviews: [{
+	                    user: username,
+	                    review: review
+	                }]
+	            }).then(function (response) {
+	                console.log(response);
+	                c.setState({ movie: response.data, loading: false, userReview: true });
+	            }).catch(function (error) {
+	                console.log(error);
+	            });
+	        };
+	
+	        _this.state = {
+	            loading: true,
+	            movie: '',
+	            userReview: false,
+	            externalApiCall: false,
+	            emptyReview: true
+	        };
+	        return _this;
+	    }
+	
+	    _createClass(GetMovie, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            var c = this;
+	
+	            _axios2.default.get('http://localhost:3000/api/movie/' + this.props.match.params.id) // check if movie exist in local database..
+	            .then(function (response) {
+	                if (response.data) {
+	                    c.setState({ movie: response.data, loading: false });
+	                    console.log('request made from local db');
+	                } else {
+	                    c.setState({ externalApiCall: true }); // ..if not, allow for the GET request for external database
+	                }
+	            }).catch(function (error) {
+	                console.log(error);
+	            });
+	
+	            if (!this.state.movie) {
+	                return _react2.default.createElement(
+	                    'div',
+	                    null,
+	                    'Sorry, but the movie was not found'
+	                );
+	            }
+	        }
+	    }, {
+	        key: 'componentDidUpdate',
+	        value: function componentDidUpdate() {
+	            if (this.state.externalApiCall) {
+	                var c = this;
+	
+	                _axios2.default.get('https://api.themoviedb.org/3/movie/' + this.props.match.params.id + '?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US') // Get data from external database
+	                .then(function (response) {
+	                    c.setState({ movie: response.data, loading: false, externalApiCall: false });
+	                    console.log('request made from external db');
+	                    //if (response.data.reviews)
+	                }).catch(function (error) {
+	                    console.log(error);
+	                });
+	            }
+	        }
+	    }, {
+	        key: 'loading',
+	        value: function loading() {
+	            if (this.state.loading) {
+	                return _react2.default.createElement(
+	                    'h2',
+	                    null,
+	                    'Loading...'
+	                );
+	            } else {
+	                return _react2.default.createElement(_movieHeader2.default, { movie: this.state.movie });
+	            }
+	        }
+	    }, {
+	        key: 'userReview',
+	        value: function userReview() {
+	            // if logged in user review exist
+	            if (this.state.userReview) {
+	                return _react2.default.createElement(_reviewBody2.default, { movie: this.state.movie, paramsId: this.props.match.params.id });
+	            } else {
+	                return _react2.default.createElement(_reviewForm2.default, { addReview: this.addReview });
+	            }
+	        }
+	    }, {
+	        key: 'emptyReview',
+	        value: function emptyReview() {
+	            // if review exist
+	            if (this.state.movie.reviews) {
+	                return _react2.default.createElement(_reviewList2.default, { movie: this.state.movie });
+	            } else {
+	                return _react2.default.createElement(
+	                    'p',
+	                    null,
+	                    'No review yet.'
+	                );
+	            }
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            return _react2.default.createElement(
+	                'div',
+	                { className: 'App' },
+	                this.loading(),
+	                this.userReview(),
+	                this.emptyReview()
+	            );
+	        }
+	    }]);
+	
+	    return GetMovie;
+	}(_react2.default.Component);
+	
+	exports.default = GetMovie;
+
+/***/ }),
+/* 98 */
+/*!*******************************************!*\
+  !*** ./src/components/home/reviewForm.js ***!
+  \*******************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var ReviewForm = function (_React$Component) {
+	    _inherits(ReviewForm, _React$Component);
+	
+	    function ReviewForm() {
+	        _classCallCheck(this, ReviewForm);
+	
+	        return _possibleConstructorReturn(this, (ReviewForm.__proto__ || Object.getPrototypeOf(ReviewForm)).apply(this, arguments));
+	    }
+	
+	    _createClass(ReviewForm, [{
+	        key: "onSubmit",
+	        value: function onSubmit(e) {
+	            e.preventDefault();
+	            this.addReview(this.refs.usernameRefs.value, this.refs.reviewRefs.value);
+	        }
+	    }, {
+	        key: "render",
+	        value: function render() {
+	            return _react2.default.createElement(
+	                "form",
+	                { onSubmit: this.props.onSubmit },
+	                _react2.default.createElement(
+	                    "div",
+	                    { className: "review-form" },
+	                    _react2.default.createElement("input", {
+	                        type: "text",
+	                        placeholder: "Username",
+	                        ref: "usernameRefs" }),
+	                    _react2.default.createElement("textarea", {
+	                        type: "text",
+	                        placeholder: "Write your review...",
+	                        ref: "reviewRefs",
+	                        className: "form-control" }),
+	                    _react2.default.createElement(
+	                        "span",
+	                        { className: "input-group-btn" },
+	                        _react2.default.createElement(
+	                            "button",
+	                            { type: "submit", className: "btn btn-info" },
+	                            "Sumbit"
+	                        )
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return ReviewForm;
+	}(_react2.default.Component);
+	
+	exports.default = ReviewForm;
+
+/***/ }),
+/* 99 */
+/*!********************************************!*\
+  !*** ./src/components/home/movieHeader.js ***!
+  \********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var MovieHeader = function MovieHeader(_ref) {
+	    var movie = _ref.movie;
+	
+	    return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	            'h1',
+	            null,
+	            movie.title
+	        ),
+	        _react2.default.createElement(
+	            'h2',
+	            null,
+	            'Synopsis:'
+	        ),
+	        _react2.default.createElement(
+	            'p',
+	            null,
+	            movie.overview
+	        )
+	    );
+	};
+	
+	exports.default = MovieHeader;
+
+/***/ }),
+/* 100 */
+/*!*******************************************!*\
+  !*** ./src/components/home/reviewBody.js ***!
+  \*******************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var ReviewBody = function ReviewBody(_ref) {
+	    var movie = _ref.movie,
+	        paramsId = _ref.paramsId;
+	
+	    return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	            'p',
+	            null,
+	            'You logged in as: ',
+	            movie.reviews[0].user
+	        ),
+	        _react2.default.createElement(
+	            'h3',
+	            null,
+	            'Your review:'
+	        ),
+	        _react2.default.createElement(
+	            'p',
+	            null,
+	            movie.reviews[0].review
+	        ),
+	        _react2.default.createElement(
+	            Link,
+	            { to: '/movie/' + paramsId + '/' + movie.reviews[0]._id },
+	            'edit'
+	        )
+	    );
+	};
+	
+	exports.default = ReviewBody;
+
+/***/ }),
+/* 101 */
+/*!*******************************************!*\
+  !*** ./src/components/home/reviewList.js ***!
+  \*******************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var ReviewList = function ReviewList(_ref) {
+	    var movie = _ref.movie;
+	
+	    return _react2.default.createElement(
+	        "div",
+	        null,
+	        _react2.default.createElement(
+	            "h3",
+	            null,
+	            "Review list:"
+	        ),
+	        movie.reviews.map(function (rev, i) {
+	            return _react2.default.createElement(
+	                "div",
+	                { key: i, className: "Movies" },
+	                _react2.default.createElement(
+	                    "p",
+	                    null,
+	                    "Review: ",
+	                    rev.review
+	                ),
+	                _react2.default.createElement(
+	                    "p",
+	                    null,
+	                    "by: ",
+	                    rev.user
+	                )
+	            );
+	        })
+	    );
+	};
+	
+	exports.default = ReviewList;
 
 /***/ })
 /******/ ]);

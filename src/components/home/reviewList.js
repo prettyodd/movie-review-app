@@ -3,8 +3,13 @@ import React from 'react'
 const ReviewList = ({ movie }) => {
     return (
         <div>
-            <p>Review list:</p>
-            <p>{movie[0].reviews[0].review} by {movie[0].reviews[0].user}</p>
+            <h3>Review list:</h3>
+            {movie.reviews.map((rev, i) =>
+                <div key={i} className="Movies">
+                    <p>Review: {rev.review}</p>
+                    <p>by: {rev.user}</p>
+                </div>
+            )}
         </div>
     )
 }
