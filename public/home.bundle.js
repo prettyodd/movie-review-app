@@ -14054,6 +14054,8 @@
 	    value: true
 	});
 	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	var _react = __webpack_require__(/*! react */ 1);
@@ -14098,22 +14100,49 @@
 	
 	        var _this = _possibleConstructorReturn(this, (GetMovie.__proto__ || Object.getPrototypeOf(GetMovie)).call(this, props));
 	
-	        _this.addReview = function (username, review) {
+	        _this.addReview = function (usernameRefs, reviewRefs) {
+	            // trigger when user submit review form
 	            var c = _this;
-	            _axios2.default.post('http://localhost:3000/api/movie/' + _this.props.match.params.id, {
-	                id: c.props.match.params.id,
-	                title: c.state.movie.title,
-	                overview: c.state.movie.overview,
-	                reviews: [{
-	                    user: username,
-	                    review: review
-	                }]
-	            }).then(function (response) {
-	                console.log(response);
-	                c.setState({ movie: response.data, loading: false, userReview: true });
-	            }).catch(function (error) {
-	                console.log(error);
-	            });
+	
+	            if (!_this.state.externalApiCall) {
+	                // if movie data available on local database, post a new review
+	                _axios2.default.post('http://localhost:3000/api/movie/' + _this.props.match.params.id + '/reviews', {
+	                    reviews: {
+	                        user: usernameRefs,
+	                        review: reviewRefs
+	                    }
+	                }).then(function (response) {
+	                    console.log(response);
+	                    console.log(c.state.movie);
+	                    c.setState({
+	                        movie: _extends({}, c.state.movie, {
+	                            reviews: response.data.reviews
+	                        }),
+	                        currentUser: usernameRefs,
+	                        currentReview: reviewRefs,
+	                        userReview: true
+	                    });
+	                    console.log(c.state.movie);
+	                }).catch(function (error) {
+	                    console.log(error);
+	                });
+	            } else {
+	                // post new movie data
+	                _axios2.default.post('http://localhost:3000/api/movie/' + _this.props.match.params.id, {
+	                    id: c.props.match.params.id,
+	                    title: c.state.movie.title,
+	                    overview: c.state.movie.overview,
+	                    reviews: [{
+	                        user: username,
+	                        review: review
+	                    }]
+	                }).then(function (response) {
+	                    console.log(response);
+	                    c.setState({ movie: response.data, loading: false, userReview: true });
+	                }).catch(function (error) {
+	                    console.log(error);
+	                });
+	            }
 	        };
 	
 	        _this.state = {
@@ -14121,7 +14150,9 @@
 	            movie: '',
 	            userReview: false,
 	            externalApiCall: false,
-	            emptyReview: true
+	            emptyReview: true,
+	            currentUser: '',
+	            currentReview: ''
 	        };
 	        return _this;
 	    }
@@ -14185,7 +14216,7 @@
 	        value: function userReview() {
 	            // if logged in user review exist
 	            if (this.state.userReview) {
-	                return _react2.default.createElement(_reviewBody2.default, { movie: this.state.movie, paramsId: this.props.match.params.id });
+	                return _react2.default.createElement(_reviewBody2.default, { movie: this.state.movie, paramsId: this.props.match.params.id, currentUser: this.state.currentUser, currentReview: this.state.currentReview });
 	            } else {
 	                return _react2.default.createElement(_reviewForm2.default, { addReview: this.addReview });
 	            }
@@ -14253,23 +14284,28 @@
 	    _inherits(ReviewForm, _React$Component);
 	
 	    function ReviewForm() {
+	        var _ref;
+	
+	        var _temp, _this, _ret;
+	
 	        _classCallCheck(this, ReviewForm);
 	
-	        return _possibleConstructorReturn(this, (ReviewForm.__proto__ || Object.getPrototypeOf(ReviewForm)).apply(this, arguments));
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	            args[_key] = arguments[_key];
+	        }
+	
+	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = ReviewForm.__proto__ || Object.getPrototypeOf(ReviewForm)).call.apply(_ref, [this].concat(args))), _this), _this.onSubmit = function (e) {
+	            e.preventDefault();
+	            _this.props.addReview(_this.refs.usernameRefs.value, _this.refs.reviewRefs.value);
+	        }, _temp), _possibleConstructorReturn(_this, _ret);
 	    }
 	
 	    _createClass(ReviewForm, [{
-	        key: "onSubmit",
-	        value: function onSubmit(e) {
-	            e.preventDefault();
-	            this.addReview(this.refs.usernameRefs.value, this.refs.reviewRefs.value);
-	        }
-	    }, {
 	        key: "render",
 	        value: function render() {
 	            return _react2.default.createElement(
 	                "form",
-	                { onSubmit: this.props.onSubmit },
+	                { onSubmit: this.onSubmit },
 	                _react2.default.createElement(
 	                    "div",
 	                    { className: "review-form" },
@@ -14363,11 +14399,15 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	var _reactRouterDom = __webpack_require__(/*! react-router-dom */ 56);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var ReviewBody = function ReviewBody(_ref) {
 	    var movie = _ref.movie,
-	        paramsId = _ref.paramsId;
+	        paramsId = _ref.paramsId,
+	        currentUser = _ref.currentUser,
+	        currentReview = _ref.currentReview;
 	
 	    return _react2.default.createElement(
 	        'div',
@@ -14376,7 +14416,7 @@
 	            'p',
 	            null,
 	            'You logged in as: ',
-	            movie.reviews[0].user
+	            currentUser
 	        ),
 	        _react2.default.createElement(
 	            'h3',
@@ -14386,10 +14426,10 @@
 	        _react2.default.createElement(
 	            'p',
 	            null,
-	            movie.reviews[0].review
+	            currentReview
 	        ),
 	        _react2.default.createElement(
-	            Link,
+	            _reactRouterDom.Link,
 	            { to: '/movie/' + paramsId + '/' + movie.reviews[0]._id },
 	            'edit'
 	        )
@@ -14419,6 +14459,7 @@
 	
 	var ReviewList = function ReviewList(_ref) {
 	    var movie = _ref.movie;
+	
 	
 	    return _react2.default.createElement(
 	        "div",

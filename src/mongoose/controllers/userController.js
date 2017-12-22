@@ -1,9 +1,10 @@
 import mongoose from 'mongoose';
 import { UserSchema } from '../models/userSchema';
-import { MovieSchema } from '../models/movieSchema';
+import { MovieSchema, ReviewSchema } from '../models/movieSchema';
 
 const User = mongoose.model('User', UserSchema);
 const Movie = mongoose.model('Movie', MovieSchema);
+const Review = mongoose.model('Review', ReviewSchema)
 
 export const addNewUser = (req, res) => {
     let newUser = new User(req.body);
@@ -16,7 +17,7 @@ export const addNewUser = (req, res) => {
     });
 };
 
-export const addNewMovie = (req, res) => {
+export const addNewMovieWithReview = (req, res) => {
     let newMovie = new Movie(req.body)
 
     newMovie.save((err, movie) => {
@@ -37,10 +38,24 @@ export const loadSingleMovieData = (req, res) => {
 }
 
 export const editReview = (req, res) => {
-    Contact.findOneAndUpdate({ id: req.params.id, _id: req.params._id }, req.body, { new: true }, (err, movie) => {
+    Movie.findOneAndUpdate({ id: req.params.id, _id: req.params._id }, req.body, { new: true }, (err, movie) => {
         if (err) {
             res.send(err);
         }
         res.json(movie);
     })
+}
+
+export const addReview = (req, res) => {
+    Movie.findOneAndUpdate(
+        req.params.id,
+        {$push: req.body},
+        {safe: true, upsert: true, new: true},
+        (err, movie) => {
+            if (err) {
+                res.send(err)
+            }
+            res.json(movie)
+        }
+    )
 }

@@ -2,14 +2,14 @@ import React from 'react'
 
 class ReviewForm extends React.Component {
 
-    onSubmit(e) {
+    onSubmit = (e) => {
         e.preventDefault();
-        this.addReview(this.refs.usernameRefs.value, this.refs.reviewRefs.value)
+        this.props.addReview(this.refs.usernameRefs.value, this.refs.reviewRefs.value)
     }
 
     render() {
         return (
-            <form onSubmit={this.props.onSubmit}>
+            <form onSubmit={this.onSubmit}>
                 <div className="review-form">
                 <input 
                     type="text" 

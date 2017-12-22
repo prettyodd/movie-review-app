@@ -21,3 +21,12 @@ export const MovieSchema = new Schema({
         }
     }],
 });
+
+export const ReviewSchema = new Schema({
+    user: {
+        type: String
+    },
+    review: {
+        type: String
+    }
+})

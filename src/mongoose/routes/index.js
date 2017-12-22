@@ -2,9 +2,10 @@ import express from 'express';
 import mongoose from 'mongoose';
 import { 
     addNewUser,
-    addNewMovie,
+    addNewMovieWithReview,
     loadSingleMovieData,
-    editReview
+    editReview,
+    addReview
 } from '../controllers/userController';
 
 // mongoose setuo
@@ -27,7 +28,7 @@ Routes.get('/movie', (req, res) => {
 });
 
 Routes.get('/movie/:id', loadSingleMovieData)
-Routes.post('/movie/:id', addNewMovie)
-Routes.put('/movie/:id/:_id', editReview)
+Routes.post('/movie/:id', addNewMovieWithReview)
+Routes.post('/movie/:id/reviews', addReview)
 
 export default Routes;

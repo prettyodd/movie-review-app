@@ -1,9 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 import ReviewForm from './reviewForm'
-import {
-    Link
-  } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import MovieHeader from './movieHeader'
 import ReviewBody from './reviewBody'
 import ReviewList from './reviewList'
@@ -17,30 +15,60 @@ class GetMovie extends React.Component {
           movie: '',
           userReview: false,
           externalApiCall: false,
-          emptyReview: true
+          emptyReview: true,
+          currentUser: '',
+          currentReview: ''
         }
     }
 
-    addReview = (username, review) => {
+    addReview = (usernameRefs, reviewRefs) => { // trigger when user submit review form
         let c = this
-        axios.post(`http://localhost:3000/api/movie/${this.props.match.params.id}`, {
-            id: c.props.match.params.id,
-            title: c.state.movie.title,
-            overview: c.state.movie.overview,
-            reviews: [
-                {
-                    user: username,
-                    review: review
+
+        if (!this.state.externalApiCall) { // if movie data available on local database, post a new review
+            axios.post(`http://localhost:3000/api/movie/${this.props.match.params.id}/reviews`, {
+                reviews: {
+                    user: usernameRefs,
+                    review: reviewRefs
                 }
-            ]
-        })
-        .then(function (response) {
-            console.log(response)
-            c.setState({ movie: response.data, loading: false, userReview: true })
-        })
-        .catch(function (error) {
-            console.log(error)
-        }) 
+            })
+            .then(function (response) {
+                console.log(response)
+                console.log(c.state.movie)
+                c.setState({
+                    movie: {
+                        ...c.state.movie,
+                        reviews: response.data.reviews
+                    },
+                    currentUser: usernameRefs,
+                    currentReview: reviewRefs,
+                    userReview: true
+                })
+                console.log(c.state.movie)
+            })
+            .catch(function (error) {
+                console.log(error)
+            })
+
+        } else { // post new movie data
+            axios.post(`http://localhost:3000/api/movie/${this.props.match.params.id}`, {
+                id: c.props.match.params.id,
+                title: c.state.movie.title,
+                overview: c.state.movie.overview,
+                reviews: [
+                    {
+                        user: username,
+                        review: review
+                    }
+                ]
+            })
+            .then(function (response) {
+                console.log(response)
+                c.setState({ movie: response.data, loading: false, userReview: true })
+            })
+            .catch(function (error) {
+                console.log(error)
+            })
+        }
     }
 
     componentDidMount() {
@@ -90,7 +118,7 @@ class GetMovie extends React.Component {
     
     userReview() { // if logged in user review exist
         if (this.state.userReview) { 
-            return (<ReviewBody movie={this.state.movie} paramsId={this.props.match.params.id} />)
+            return (<ReviewBody movie={this.state.movie} paramsId={this.props.match.params.id} currentUser={this.state.currentUser} currentReview={this.state.currentReview} />)
         } else {
             return (<ReviewForm addReview={this.addReview} />)
         }

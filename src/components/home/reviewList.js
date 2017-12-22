@@ -1,6 +1,7 @@
 import React from 'react' 
 
 const ReviewList = ({ movie }) => {
+    
     return (
         <div>
             <h3>Review list:</h3>
