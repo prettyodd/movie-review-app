@@ -11,9 +11,10 @@ class GetMovie extends React.Component {
         super(props)
         this.state = {
           loading: true,
-          movieId: [],
+          movie: [],
           review: false,
-          externalApiCall: false
+          externalApiCall: false,
+          emptyReview: true
         }
     }
 
@@ -21,8 +22,8 @@ class GetMovie extends React.Component {
         let c = this
         axios.post(`http://localhost:3000/api/movie/${this.props.match.params.id}`, {
             id: c.props.match.params.id,
-            title: c.state.movieId[0].title,
-            overview: c.state.movieId[0].overview,
+            title: c.state.movie[0].title,
+            overview: c.state.movie[0].overview,
             reviews: [
                 {
                     user: username,
@@ -32,15 +33,14 @@ class GetMovie extends React.Component {
         })
         .then(function (response) {
             console.log(response)
-            let movieId = []
-            movieId.push(response.data)
-            c.setState({ loading: false, review: true, movieId: movieId})
+            let movie = []
+            movie.push(response.data)
+            c.setState({ loading: false, review: true, movie: movie})
         })
         .catch(function (error) {
             console.log(error)
         }) 
     }
-//great
     onSubmit(e) {
         e.preventDefault();
         this.addReview(this.refs.usernameRefs.value, this.refs.reviewRefs.value)
@@ -48,14 +48,13 @@ class GetMovie extends React.Component {
 
     componentDidMount() {
         let c = this
-        let movieId = []
-        //this.setState({ loading: true })
+        let movie = []
 
         axios.get(`http://localhost:3000/api/movie/${this.props.match.params.id}`)
             .then(function (response) {
                 if (response.data) {
-                    movieId.push(response.data)
-                    c.setState({ movieId: movieId, loading: false })
+                    movie.push(response.data)
+                    c.setState({ movie: movie, loading: false })
                     console.log('request made from local db')
                 } else {
                     c.setState({ externalApiCall: true })
@@ -65,7 +64,7 @@ class GetMovie extends React.Component {
                 console.log(error)
             })
 
-        if (!movieId) {
+        if (!movie) {
           return <div>Sorry, but the movie was not found</div>
         }
     }
@@ -73,12 +72,12 @@ class GetMovie extends React.Component {
     componentDidUpdate() {
         if (this.state.externalApiCall) {
             let c = this
-            let movieId = []
+            let movie = []
 
             axios.get(`https://api.themoviedb.org/3/movie/${this.props.match.params.id}?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US`)
             .then(function (response) {
-                movieId.push(response.data)
-                c.setState({ movieId: movieId, loading: false, externalApiCall: false })
+                movie.push(response.data)
+                c.setState({ movie: movie, loading: false, externalApiCall: false })
                 console.log('request made from external db')
             })
             .catch(function (error) {
@@ -95,25 +94,25 @@ class GetMovie extends React.Component {
             return (
                 <div>
                     <div>
-                        <h1>{this.state.movieId[0].title}</h1>
+                        <h1>{this.state.movie[0].title}</h1>
                         <h2>Synopsis:</h2> 
-                        <p>{this.state.movieId[0].overview}</p>
+                        <p>{this.state.movie[0].overview}</p>
                     </div>
                     <div>
-                        <p>You logged in as: {this.state.movieId[0].reviews[0].user}</p>
+                        <p>You logged in as: {this.state.movie[0].reviews[0].user}</p>
                         <h3>Your review:</h3>
-                        <p>{this.state.movieId[0].reviews[0].review}</p>
-                        <Link to={`/movie/${this.props.match.params.id}/${this.state.movieId[0].reviews[0]._id}`}>edit</Link>
+                        <p>{this.state.movie[0].reviews[0].review}</p>
+                        <Link to={`/movie/${this.props.match.params.id}/${this.state.movie[0].reviews[0]._id}`}>edit</Link>
                     </div>
                 </div>
             )
-        } else {
+        } else if (!this.state.emptyReview) {
             return (
                 <div>
                     <div>
-                        <h1>{this.state.movieId[0].title}</h1>
+                        <h1>{this.state.movie[0].title}</h1>
                         <h2>Synopsis:</h2> 
-                        <p>{this.state.movieId[0].overview}</p>
+                        <p>{this.state.movie[0].overview}</p>
                     </div>
 
                     <form onSubmit={this.onSubmit.bind(this)}>
@@ -136,12 +135,40 @@ class GetMovie extends React.Component {
 
                     <div>
                         <p>Review list:</p>
-                        <p>{this.state.movieId[0].reviews[0].review} by {this.state.movieId[0].reviews[0].user}</p>
+                        <p>{this.state.movie[0].reviews[0].review} by {this.state.movie[0].reviews[0].user}</p>
                     </div>
                 </div>
-            )
+            )} else {
+                return (
+                    <div>
+                    <div>
+                        <h1>{this.state.movie[0].title}</h1>
+                        <h2>Synopsis:</h2> 
+                        <p>{this.state.movie[0].overview}</p>
+                    </div>
+
+                    <form onSubmit={this.onSubmit.bind(this)}>
+                        <div className="review-form">
+                        <input 
+                            type="text"
+                            placeholder="Username"
+                            ref="usernameRefs" />
+                        <textarea 
+                            type="text"
+                            placeholder="Write your review..."
+                            ref="reviewRefs"/>
+                        <span className="input-group-btn">
+                          <button type="submit" className="btn btn-info">
+                             Sumbit
+                          </button>
+                        </span>
+                        </div>
+                    </form>
+                    </div>
+                )
+            }
         }
-    }
+    
 }
 
 export default GetMovie

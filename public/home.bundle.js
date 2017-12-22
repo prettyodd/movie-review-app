@@ -7846,18 +7846,15 @@
 	    };
 	    return _this;
 	  }
-	  // onChange function will be triggered every time onChange event(assigned to e) occur. target.value is the input value that trigger onChange event.
-	
 	
 	  _createClass(SearchMovie, [{
 	    key: 'onChange',
 	    value: function onChange(e) {
+	      // onChange function will be triggered every time onChange event(assigned to e) occur. target.value is the input value that trigger onChange event.
 	
 	      if (e.target.value) {
-	        // this must be assigned to other variables before used with axios
-	        var c = this;
-	        // cannot access the event in an asynchronous way(axios).
-	        var valueObj = e.target.value;
+	        var c = this; // this must be assigned to other variables before used with axios
+	        var valueObj = e.target.value; // event must be assign to a variable before can be used inside asynchronous function (axios)
 	
 	        _axios2.default.get('https://api.themoviedb.org/3/search/movie?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US&query=' + valueObj + '&page=1&include_adult=false').then(function (response) {
 	          var movie = [];
@@ -14091,9 +14088,10 @@
 	
 	        _this.state = {
 	            loading: true,
-	            movieId: [],
+	            movie: [],
 	            review: false,
-	            externalApiCall: false
+	            externalApiCall: false,
+	            emptyReview: true
 	        };
 	        return _this;
 	    }
@@ -14104,23 +14102,21 @@
 	            var c = this;
 	            _axios2.default.post('http://localhost:3000/api/movie/' + this.props.match.params.id, {
 	                id: c.props.match.params.id,
-	                title: c.state.movieId[0].title,
-	                overview: c.state.movieId[0].overview,
+	                title: c.state.movie[0].title,
+	                overview: c.state.movie[0].overview,
 	                reviews: [{
 	                    user: username,
 	                    review: review
 	                }]
 	            }).then(function (response) {
 	                console.log(response);
-	                var movieId = [];
-	                movieId.push(response.data);
-	                c.setState({ loading: false, review: true, movieId: movieId });
+	                var movie = [];
+	                movie.push(response.data);
+	                c.setState({ loading: false, review: true, movie: movie });
 	            }).catch(function (error) {
 	                console.log(error);
 	            });
 	        }
-	        //great
-	
 	    }, {
 	        key: 'onSubmit',
 	        value: function onSubmit(e) {
@@ -14131,13 +14127,12 @@
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
 	            var c = this;
-	            var movieId = [];
-	            //this.setState({ loading: true })
+	            var movie = [];
 	
 	            _axios2.default.get('http://localhost:3000/api/movie/' + this.props.match.params.id).then(function (response) {
 	                if (response.data) {
-	                    movieId.push(response.data);
-	                    c.setState({ movieId: movieId, loading: false });
+	                    movie.push(response.data);
+	                    c.setState({ movie: movie, loading: false });
 	                    console.log('request made from local db');
 	                } else {
 	                    c.setState({ externalApiCall: true });
@@ -14146,7 +14141,7 @@
 	                console.log(error);
 	            });
 	
-	            if (!movieId) {
+	            if (!movie) {
 	                return _react2.default.createElement(
 	                    'div',
 	                    null,
@@ -14159,11 +14154,11 @@
 	        value: function componentDidUpdate() {
 	            if (this.state.externalApiCall) {
 	                var c = this;
-	                var movieId = [];
+	                var movie = [];
 	
 	                _axios2.default.get('https://api.themoviedb.org/3/movie/' + this.props.match.params.id + '?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US').then(function (response) {
-	                    movieId.push(response.data);
-	                    c.setState({ movieId: movieId, loading: false, externalApiCall: false });
+	                    movie.push(response.data);
+	                    c.setState({ movie: movie, loading: false, externalApiCall: false });
 	                    console.log('request made from external db');
 	                }).catch(function (error) {
 	                    console.log(error);
@@ -14190,7 +14185,7 @@
 	                        _react2.default.createElement(
 	                            'h1',
 	                            null,
-	                            this.state.movieId[0].title
+	                            this.state.movie[0].title
 	                        ),
 	                        _react2.default.createElement(
 	                            'h2',
@@ -14200,7 +14195,7 @@
 	                        _react2.default.createElement(
 	                            'p',
 	                            null,
-	                            this.state.movieId[0].overview
+	                            this.state.movie[0].overview
 	                        )
 	                    ),
 	                    _react2.default.createElement(
@@ -14210,7 +14205,7 @@
 	                            'p',
 	                            null,
 	                            'You logged in as: ',
-	                            this.state.movieId[0].reviews[0].user
+	                            this.state.movie[0].reviews[0].user
 	                        ),
 	                        _react2.default.createElement(
 	                            'h3',
@@ -14220,16 +14215,16 @@
 	                        _react2.default.createElement(
 	                            'p',
 	                            null,
-	                            this.state.movieId[0].reviews[0].review
+	                            this.state.movie[0].reviews[0].review
 	                        ),
 	                        _react2.default.createElement(
 	                            _reactRouterDom.Link,
-	                            { to: '/movie/' + this.props.match.params.id + '/' + this.state.movieId[0].reviews[0]._id },
+	                            { to: '/movie/' + this.props.match.params.id + '/' + this.state.movie[0].reviews[0]._id },
 	                            'edit'
 	                        )
 	                    )
 	                );
-	            } else {
+	            } else if (!this.state.emptyReview) {
 	                return _react2.default.createElement(
 	                    'div',
 	                    null,
@@ -14239,7 +14234,7 @@
 	                        _react2.default.createElement(
 	                            'h1',
 	                            null,
-	                            this.state.movieId[0].title
+	                            this.state.movie[0].title
 	                        ),
 	                        _react2.default.createElement(
 	                            'h2',
@@ -14249,7 +14244,7 @@
 	                        _react2.default.createElement(
 	                            'p',
 	                            null,
-	                            this.state.movieId[0].overview
+	                            this.state.movie[0].overview
 	                        )
 	                    ),
 	                    _react2.default.createElement(
@@ -14288,9 +14283,58 @@
 	                        _react2.default.createElement(
 	                            'p',
 	                            null,
-	                            this.state.movieId[0].reviews[0].review,
+	                            this.state.movie[0].reviews[0].review,
 	                            ' by ',
-	                            this.state.movieId[0].reviews[0].user
+	                            this.state.movie[0].reviews[0].user
+	                        )
+	                    )
+	                );
+	            } else {
+	                return _react2.default.createElement(
+	                    'div',
+	                    null,
+	                    _react2.default.createElement(
+	                        'div',
+	                        null,
+	                        _react2.default.createElement(
+	                            'h1',
+	                            null,
+	                            this.state.movie[0].title
+	                        ),
+	                        _react2.default.createElement(
+	                            'h2',
+	                            null,
+	                            'Synopsis:'
+	                        ),
+	                        _react2.default.createElement(
+	                            'p',
+	                            null,
+	                            this.state.movie[0].overview
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        'form',
+	                        { onSubmit: this.onSubmit.bind(this) },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'review-form' },
+	                            _react2.default.createElement('input', {
+	                                type: 'text',
+	                                placeholder: 'Username',
+	                                ref: 'usernameRefs' }),
+	                            _react2.default.createElement('textarea', {
+	                                type: 'text',
+	                                placeholder: 'Write your review...',
+	                                ref: 'reviewRefs' }),
+	                            _react2.default.createElement(
+	                                'span',
+	                                { className: 'input-group-btn' },
+	                                _react2.default.createElement(
+	                                    'button',
+	                                    { type: 'submit', className: 'btn btn-info' },
+	                                    'Sumbit'
+	                                )
+	                            )
 	                        )
 	                    )
 	                );

@@ -37,7 +37,7 @@ export const loadSingleMovieData = (req, res) => {
 }
 
 export const editReview = (req, res) => {
-    Contact.findOneAndUpdate({ id: req.params.id, _id: req.params._id}, req.body, { new: true }, (err, movie) => {
+    Contact.findOneAndUpdate({ id: req.params.id, _id: req.params._id }, req.body, { new: true }, (err, movie) => {
         if (err) {
             res.send(err);
         }
