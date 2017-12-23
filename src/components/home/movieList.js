@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom'
 
-const MovieList = ({ lists=[] }) => {
+const MovieList = ({ lists=[], currentUser }) => {
     return (
         <div className="movie-list">
             {lists.map((list, i) =>
@@ -12,7 +12,11 @@ const MovieList = ({ lists=[] }) => {
                             <h3>Synopsis</h3>
                             <p>{list.overview}</p>
                         </div>
-                    <Link to={`/movie/${list.id}`}>Review</Link>
+                        <Link 
+                            to={{
+                                pathname: `/movie/${list.id}`,
+                                locationState: { currentUser: currentUser }
+                            }}>Review</Link>
                 </div>
             )}
         </div>

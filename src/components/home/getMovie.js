@@ -12,8 +12,6 @@ class GetMovie extends React.Component {
         this.state = {
           loading: true,
           movie: '',
-          user: false,
-          userReview: false,
           externalApiCall: false,
           emptyReview: true,
           currentUser: '',
@@ -40,7 +38,6 @@ class GetMovie extends React.Component {
                     },
                     currentUser: usernameRefs,
                     currentReview: reviewRefs,
-                    userReview: true
                 })
             })
             .catch(function (error) {
@@ -64,7 +61,6 @@ class GetMovie extends React.Component {
                 c.setState({ 
                     movie: response.data,
                     loading: false,
-                    userReview: true,
                     currentReview: reviewRefs,
                     currentUser: usernameRefs
                 })
@@ -75,6 +71,14 @@ class GetMovie extends React.Component {
         }
     }
 
+    componentWillMount() {
+        if (this.props.location.locationState === undefined) {
+            console.log('props.location undefined')
+          } else {
+            this.setState({ currentUser: this.props.location.locationState.currentUser })
+          }
+    }
+
     componentDidMount() {
         let c = this
 
@@ -83,9 +87,7 @@ class GetMovie extends React.Component {
                 if (response.data) {
                     c.setState({ movie: response.data, loading: false })
                     if (c.state.currentUser !== '') {
-                        console.log('should not print')
-                        console.log(c.state.currentUser)
-                        c.setState({ movie: response.data, loading: false, userReview: true })
+                        c.setState({ movie: response.data, loading: false })
                     } else {
                         c.setState({ movie: response.data, loading: false })
                     }
@@ -139,6 +141,11 @@ class GetMovie extends React.Component {
             <div className="App">
                 {this.loading()}
                 <ReviewBody paramsId={this.props.match.params.id} currentUser={this.state.currentUser} currentReview={this.state.currentReview} addReview={this.addReview} />
+                <Link 
+                    to={{
+                        pathname: `/`,
+                        locationState: { currentUser: this.state.currentUser }
+                    }}>Home</Link>
                 {this.emptyReview()}
             </div>
         )

@@ -7842,12 +7842,22 @@
 	
 	    _this.state = {
 	      value: '',
-	      data: []
+	      data: [],
+	      currentUser: ''
 	    };
 	    return _this;
 	  }
 	
 	  _createClass(SearchMovie, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      if (this.props.location.locationState === undefined) {
+	        console.log('props.location undefined');
+	      } else {
+	        this.setState({ currentUser: this.props.location.locationState.currentUser });
+	      }
+	    }
+	  }, {
 	    key: 'onChange',
 	    value: function onChange(e) {
 	      // onChange function will be triggered every time onChange event(assigned to e) occur. target.value is the input value that trigger onChange event.
@@ -7877,7 +7887,7 @@
 	        'div',
 	        null,
 	        _react2.default.createElement('input', { type: 'text', onChange: this.onChange.bind(this) }),
-	        _react2.default.createElement(_movieList2.default, { lists: this.state.data })
+	        _react2.default.createElement(_movieList2.default, { lists: this.state.data, currentUser: this.state.currentUser })
 	      );
 	    }
 	  }]);
@@ -9462,7 +9472,8 @@
 	
 	var MovieList = function MovieList(_ref) {
 	    var _ref$lists = _ref.lists,
-	        lists = _ref$lists === undefined ? [] : _ref$lists;
+	        lists = _ref$lists === undefined ? [] : _ref$lists,
+	        currentUser = _ref.currentUser;
 	
 	    return _react2.default.createElement(
 	        'div',
@@ -9493,7 +9504,11 @@
 	                ),
 	                _react2.default.createElement(
 	                    _reactRouterDom.Link,
-	                    { to: '/movie/' + list.id },
+	                    {
+	                        to: {
+	                            pathname: '/movie/' + list.id,
+	                            locationState: { currentUser: currentUser }
+	                        } },
 	                    'Review'
 	                )
 	            );
@@ -14114,8 +14129,7 @@
 	                            reviews: response.data.reviews
 	                        }),
 	                        currentUser: usernameRefs,
-	                        currentReview: reviewRefs,
-	                        userReview: true
+	                        currentReview: reviewRefs
 	                    });
 	                }).catch(function (error) {
 	                    console.log(error);
@@ -14135,7 +14149,6 @@
 	                    c.setState({
 	                        movie: response.data,
 	                        loading: false,
-	                        userReview: true,
 	                        currentReview: reviewRefs,
 	                        currentUser: usernameRefs
 	                    });
@@ -14148,8 +14161,6 @@
 	        _this.state = {
 	            loading: true,
 	            movie: '',
-	            user: false,
-	            userReview: false,
 	            externalApiCall: false,
 	            emptyReview: true,
 	            currentUser: '',
@@ -14159,6 +14170,15 @@
 	    }
 	
 	    _createClass(GetMovie, [{
+	        key: 'componentWillMount',
+	        value: function componentWillMount() {
+	            if (this.props.location.locationState === undefined) {
+	                console.log('props.location undefined');
+	            } else {
+	                this.setState({ currentUser: this.props.location.locationState.currentUser });
+	            }
+	        }
+	    }, {
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
 	            var c = this;
@@ -14168,9 +14188,7 @@
 	                if (response.data) {
 	                    c.setState({ movie: response.data, loading: false });
 	                    if (c.state.currentUser !== '') {
-	                        console.log('should not print');
-	                        console.log(c.state.currentUser);
-	                        c.setState({ movie: response.data, loading: false, userReview: true });
+	                        c.setState({ movie: response.data, loading: false });
 	                    } else {
 	                        c.setState({ movie: response.data, loading: false });
 	                    }
@@ -14240,6 +14258,15 @@
 	                { className: 'App' },
 	                this.loading(),
 	                _react2.default.createElement(_reviewBody2.default, { paramsId: this.props.match.params.id, currentUser: this.state.currentUser, currentReview: this.state.currentReview, addReview: this.addReview }),
+	                _react2.default.createElement(
+	                    _reactRouterDom.Link,
+	                    {
+	                        to: {
+	                            pathname: '/',
+	                            locationState: { currentUser: this.state.currentUser }
+	                        } },
+	                    'Home'
+	                ),
 	                this.emptyReview()
 	            );
 	        }
@@ -14332,7 +14359,11 @@
 	
 	    var onSubmit = function onSubmit(e) {
 	        e.preventDefault();
-	        addReview(usernameRefs.value, reviewRefs.value);
+	        if (usernameRefs === undefined) {
+	            addReview(currentUser, reviewRefs.value);
+	        } else {
+	            addReview(usernameRefs.value, reviewRefs.value);
+	        }
 	    };
 	
 	    var userBodyOrFullForm = function userBodyOrFullForm() {

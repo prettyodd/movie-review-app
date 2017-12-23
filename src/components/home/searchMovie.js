@@ -10,7 +10,16 @@ class SearchMovie extends React.Component {
       super(props)
       this.state = {
         value: '',
-        data: []
+        data: [],
+        currentUser: ''
+      }
+    }
+
+    componentDidMount() {
+      if (this.props.location.locationState === undefined) {
+        console.log('props.location undefined')
+      } else {
+        this.setState({ currentUser: this.props.location.locationState.currentUser })
       }
     }
 
@@ -41,7 +50,7 @@ class SearchMovie extends React.Component {
       return (
         <div>
           <input type="text" onChange={this.onChange.bind(this)}/>
-          <MovieList lists={this.state.data} />
+          <MovieList lists={this.state.data} currentUser={this.state.currentUser} />
         </div>
       )
     }

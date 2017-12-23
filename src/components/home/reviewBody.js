@@ -7,7 +7,11 @@ const ReviewBody = ({ paramsId, currentUser, currentReview, addReview=f=>f }) =>
 
     const onSubmit = (e) => {
         e.preventDefault()
-        addReview(usernameRefs.value, reviewRefs.value)
+        if (usernameRefs === undefined) {
+            addReview(currentUser, reviewRefs.value)
+        } else {
+            addReview(usernameRefs.value, reviewRefs.value)
+        }
     }
 
     const userBodyOrFullForm = () => { 
@@ -41,6 +45,8 @@ const ReviewBody = ({ paramsId, currentUser, currentReview, addReview=f=>f }) =>
     }
 
     const reviewBodyOrReviewForm = () => {
+
+
         
         if (currentReview !== '') {
             return (
