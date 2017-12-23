@@ -7,7 +7,7 @@ const ReviewBody = ({ movie, paramsId, currentUser, currentReview }) => {
             <p>You logged in as: {currentUser}</p>
                 <h3>Your review:</h3>
             <p>{currentReview}</p>
-            <Link to={`/movie/${paramsId}/${movie.reviews[0]._id}`}>edit</Link>
+            <Link to={`/movie/${paramsId}/reviews/${currentUser}`}>edit</Link>
         </div>
     )
 }

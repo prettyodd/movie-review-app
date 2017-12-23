@@ -33,7 +33,6 @@ class GetMovie extends React.Component {
             })
             .then(function (response) {
                 console.log(response)
-                console.log(c.state.movie)
                 c.setState({
                     movie: {
                         ...c.state.movie,
@@ -43,13 +42,12 @@ class GetMovie extends React.Component {
                     currentReview: reviewRefs,
                     userReview: true
                 })
-                console.log(c.state.movie)
             })
             .catch(function (error) {
                 console.log(error)
             })
 
-        } else { // post new movie data
+        } else { // post new movie with review
             axios.post(`http://localhost:3000/api/movie/${this.props.match.params.id}`, {
                 id: c.props.match.params.id,
                 title: c.state.movie.title,
@@ -63,7 +61,13 @@ class GetMovie extends React.Component {
             })
             .then(function (response) {
                 console.log(response)
-                c.setState({ movie: response.data, loading: false, userReview: true })
+                c.setState({ 
+                    movie: response.data,
+                    loading: false,
+                    userReview: true,
+                    currentReview: reviewRefs,
+                    currentUser: usernameRefs
+                })
             })
             .catch(function (error) {
                 console.log(error)

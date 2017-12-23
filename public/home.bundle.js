@@ -14113,7 +14113,6 @@
 	                    }
 	                }).then(function (response) {
 	                    console.log(response);
-	                    console.log(c.state.movie);
 	                    c.setState({
 	                        movie: _extends({}, c.state.movie, {
 	                            reviews: response.data.reviews
@@ -14122,12 +14121,11 @@
 	                        currentReview: reviewRefs,
 	                        userReview: true
 	                    });
-	                    console.log(c.state.movie);
 	                }).catch(function (error) {
 	                    console.log(error);
 	                });
 	            } else {
-	                // post new movie data
+	                // post new movie with review
 	                _axios2.default.post('http://localhost:3000/api/movie/' + _this.props.match.params.id, {
 	                    id: c.props.match.params.id,
 	                    title: c.state.movie.title,
@@ -14138,7 +14136,13 @@
 	                    }]
 	                }).then(function (response) {
 	                    console.log(response);
-	                    c.setState({ movie: response.data, loading: false, userReview: true });
+	                    c.setState({
+	                        movie: response.data,
+	                        loading: false,
+	                        userReview: true,
+	                        currentReview: reviewRefs,
+	                        currentUser: usernameRefs
+	                    });
 	                }).catch(function (error) {
 	                    console.log(error);
 	                });
@@ -14430,7 +14434,7 @@
 	        ),
 	        _react2.default.createElement(
 	            _reactRouterDom.Link,
-	            { to: '/movie/' + paramsId + '/' + movie.reviews[0]._id },
+	            { to: '/movie/' + paramsId + '/reviews/' + currentUser },
 	            'edit'
 	        )
 	    );
