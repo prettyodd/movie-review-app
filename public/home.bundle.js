@@ -14066,10 +14066,6 @@
 	
 	var _axios2 = _interopRequireDefault(_axios);
 	
-	var _reviewForm = __webpack_require__(/*! ./reviewForm */ 98);
-	
-	var _reviewForm2 = _interopRequireDefault(_reviewForm);
-	
 	var _reactRouterDom = __webpack_require__(/*! react-router-dom */ 56);
 	
 	var _movieHeader = __webpack_require__(/*! ./movieHeader */ 99);
@@ -14152,6 +14148,7 @@
 	        _this.state = {
 	            loading: true,
 	            movie: '',
+	            user: false,
 	            userReview: false,
 	            externalApiCall: false,
 	            emptyReview: true,
@@ -14170,6 +14167,13 @@
 	            .then(function (response) {
 	                if (response.data) {
 	                    c.setState({ movie: response.data, loading: false });
+	                    if (c.state.currentUser !== '') {
+	                        console.log('should not print');
+	                        console.log(c.state.currentUser);
+	                        c.setState({ movie: response.data, loading: false, userReview: true });
+	                    } else {
+	                        c.setState({ movie: response.data, loading: false });
+	                    }
 	                    console.log('request made from local db');
 	                } else {
 	                    c.setState({ externalApiCall: true }); // ..if not, allow for the GET request for external database
@@ -14196,7 +14200,6 @@
 	                .then(function (response) {
 	                    c.setState({ movie: response.data, loading: false, externalApiCall: false });
 	                    console.log('request made from external db');
-	                    //if (response.data.reviews)
 	                }).catch(function (error) {
 	                    console.log(error);
 	                });
@@ -14213,16 +14216,6 @@
 	                );
 	            } else {
 	                return _react2.default.createElement(_movieHeader2.default, { movie: this.state.movie });
-	            }
-	        }
-	    }, {
-	        key: 'userReview',
-	        value: function userReview() {
-	            // if logged in user review exist
-	            if (this.state.userReview) {
-	                return _react2.default.createElement(_reviewBody2.default, { movie: this.state.movie, paramsId: this.props.match.params.id, currentUser: this.state.currentUser, currentReview: this.state.currentReview });
-	            } else {
-	                return _react2.default.createElement(_reviewForm2.default, { addReview: this.addReview });
 	            }
 	        }
 	    }, {
@@ -14246,7 +14239,7 @@
 	                'div',
 	                { className: 'App' },
 	                this.loading(),
-	                this.userReview(),
+	                _react2.default.createElement(_reviewBody2.default, { paramsId: this.props.match.params.id, currentUser: this.state.currentUser, currentReview: this.state.currentReview, addReview: this.addReview }),
 	                this.emptyReview()
 	            );
 	        }
@@ -14258,90 +14251,7 @@
 	exports.default = GetMovie;
 
 /***/ }),
-/* 98 */
-/*!*******************************************!*\
-  !*** ./src/components/home/reviewForm.js ***!
-  \*******************************************/
-/***/ (function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(/*! react */ 1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var ReviewForm = function (_React$Component) {
-	    _inherits(ReviewForm, _React$Component);
-	
-	    function ReviewForm() {
-	        var _ref;
-	
-	        var _temp, _this, _ret;
-	
-	        _classCallCheck(this, ReviewForm);
-	
-	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	            args[_key] = arguments[_key];
-	        }
-	
-	        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = ReviewForm.__proto__ || Object.getPrototypeOf(ReviewForm)).call.apply(_ref, [this].concat(args))), _this), _this.onSubmit = function (e) {
-	            e.preventDefault();
-	            _this.props.addReview(_this.refs.usernameRefs.value, _this.refs.reviewRefs.value);
-	        }, _temp), _possibleConstructorReturn(_this, _ret);
-	    }
-	
-	    _createClass(ReviewForm, [{
-	        key: "render",
-	        value: function render() {
-	            return _react2.default.createElement(
-	                "form",
-	                { onSubmit: this.onSubmit },
-	                _react2.default.createElement(
-	                    "div",
-	                    { className: "review-form" },
-	                    _react2.default.createElement("input", {
-	                        type: "text",
-	                        placeholder: "Username",
-	                        ref: "usernameRefs" }),
-	                    _react2.default.createElement("textarea", {
-	                        type: "text",
-	                        placeholder: "Write your review...",
-	                        ref: "reviewRefs",
-	                        className: "form-control" }),
-	                    _react2.default.createElement(
-	                        "span",
-	                        { className: "input-group-btn" },
-	                        _react2.default.createElement(
-	                            "button",
-	                            { type: "submit", className: "btn btn-info" },
-	                            "Sumbit"
-	                        )
-	                    )
-	                )
-	            );
-	        }
-	    }]);
-	
-	    return ReviewForm;
-	}(_react2.default.Component);
-	
-	exports.default = ReviewForm;
-
-/***/ }),
+/* 98 */,
 /* 99 */
 /*!********************************************!*\
   !*** ./src/components/home/movieHeader.js ***!
@@ -14408,35 +14318,113 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var ReviewBody = function ReviewBody(_ref) {
-	    var movie = _ref.movie,
-	        paramsId = _ref.paramsId,
+	    var paramsId = _ref.paramsId,
 	        currentUser = _ref.currentUser,
-	        currentReview = _ref.currentReview;
+	        currentReview = _ref.currentReview,
+	        _ref$addReview = _ref.addReview,
+	        addReview = _ref$addReview === undefined ? function (f) {
+	        return f;
+	    } : _ref$addReview;
+	
+	
+	    var reviewRefs = void 0,
+	        usernameRefs = void 0;
+	
+	    var onSubmit = function onSubmit(e) {
+	        e.preventDefault();
+	        addReview(usernameRefs.value, reviewRefs.value);
+	    };
+	
+	    var userBodyOrFullForm = function userBodyOrFullForm() {
+	
+	        if (currentUser !== '') {
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                _react2.default.createElement(
+	                    'p',
+	                    null,
+	                    'You logged in as: ',
+	                    currentUser
+	                )
+	            );
+	        } else {
+	            return _react2.default.createElement(
+	                'form',
+	                { onSubmit: onSubmit },
+	                _react2.default.createElement('input', {
+	                    type: 'text',
+	                    placeholder: 'Username',
+	                    ref: function ref(el) {
+	                        return usernameRefs = el;
+	                    } }),
+	                _react2.default.createElement('textarea', {
+	                    type: 'text',
+	                    placeholder: 'Write your review...',
+	                    ref: function ref(el) {
+	                        return reviewRefs = el;
+	                    },
+	                    className: 'form-control' }),
+	                _react2.default.createElement(
+	                    'span',
+	                    { className: 'input-group-btn' },
+	                    _react2.default.createElement(
+	                        'button',
+	                        { type: 'submit', className: 'btn btn-info' },
+	                        'Sumbit'
+	                    )
+	                )
+	            );
+	        }
+	    };
+	
+	    var reviewBodyOrReviewForm = function reviewBodyOrReviewForm() {
+	
+	        if (currentReview !== '') {
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                _react2.default.createElement(
+	                    'p',
+	                    null,
+	                    'Your review: ',
+	                    currentReview
+	                ),
+	                _react2.default.createElement(
+	                    _reactRouterDom.Link,
+	                    { to: '/movie/' + paramsId + '/reviews/' + currentUser },
+	                    'edit'
+	                )
+	            );
+	        } else if (currentUser !== '' && currentReview === '') {
+	            return _react2.default.createElement(
+	                'form',
+	                { onSubmit: onSubmit },
+	                _react2.default.createElement('textarea', {
+	                    type: 'text',
+	                    placeholder: 'Write your review...',
+	                    ref: function ref(el) {
+	                        return reviewRefs = el;
+	                    } // can't use this.refs on stateless component
+	                    , className: 'form-control' }),
+	                _react2.default.createElement(
+	                    'span',
+	                    { className: 'input-group-btn' },
+	                    _react2.default.createElement(
+	                        'button',
+	                        { type: 'submit', className: 'btn btn-info' },
+	                        'Sumbit'
+	                    )
+	                )
+	            );
+	        }
+	    };
 	
 	    return _react2.default.createElement(
 	        'div',
 	        null,
-	        _react2.default.createElement(
-	            'p',
-	            null,
-	            'You logged in as: ',
-	            currentUser
-	        ),
-	        _react2.default.createElement(
-	            'h3',
-	            null,
-	            'Your review:'
-	        ),
-	        _react2.default.createElement(
-	            'p',
-	            null,
-	            currentReview
-	        ),
-	        _react2.default.createElement(
-	            _reactRouterDom.Link,
-	            { to: '/movie/' + paramsId + '/reviews/' + currentUser },
-	            'edit'
-	        )
+	        userBodyOrFullForm(),
+	        reviewBodyOrReviewForm()
 	    );
 	};
 	

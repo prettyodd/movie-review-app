@@ -1,6 +1,5 @@
 import React from 'react'
 import axios from 'axios'
-import ReviewForm from './reviewForm'
 import { Link } from 'react-router-dom'
 import MovieHeader from './movieHeader'
 import ReviewBody from './reviewBody'
@@ -13,6 +12,7 @@ class GetMovie extends React.Component {
         this.state = {
           loading: true,
           movie: '',
+          user: false,
           userReview: false,
           externalApiCall: false,
           emptyReview: true,
@@ -82,6 +82,13 @@ class GetMovie extends React.Component {
             .then(function (response) {
                 if (response.data) {
                     c.setState({ movie: response.data, loading: false })
+                    if (c.state.currentUser !== '') {
+                        console.log('should not print')
+                        console.log(c.state.currentUser)
+                        c.setState({ movie: response.data, loading: false, userReview: true })
+                    } else {
+                        c.setState({ movie: response.data, loading: false })
+                    }
                     console.log('request made from local db')
                 } else {
                     c.setState({ externalApiCall: true }) // ..if not, allow for the GET request for external database
@@ -104,7 +111,6 @@ class GetMovie extends React.Component {
             .then(function (response) {
                 c.setState({ movie: response.data, loading: false, externalApiCall: false })
                 console.log('request made from external db')
-                //if (response.data.reviews)
             })
             .catch(function (error) {
                 console.log(error)
@@ -117,14 +123,6 @@ class GetMovie extends React.Component {
             return (<h2>Loading...</h2>)
         } else {
             return (<MovieHeader movie={this.state.movie} />)
-        }
-    }
-    
-    userReview() { // if logged in user review exist
-        if (this.state.userReview) { 
-            return (<ReviewBody movie={this.state.movie} paramsId={this.props.match.params.id} currentUser={this.state.currentUser} currentReview={this.state.currentReview} />)
-        } else {
-            return (<ReviewForm addReview={this.addReview} />)
         }
     }
 
@@ -140,7 +138,7 @@ class GetMovie extends React.Component {
         return (
             <div className="App">
                 {this.loading()}
-                {this.userReview()}
+                <ReviewBody paramsId={this.props.match.params.id} currentUser={this.state.currentUser} currentReview={this.state.currentReview} addReview={this.addReview} />
                 {this.emptyReview()}
             </div>
         )
