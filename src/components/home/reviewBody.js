@@ -7,46 +7,44 @@ const ReviewBody = ({ paramsId, currentUser, currentReview, addReview=f=>f }) =>
 
     const onSubmit = (e) => {
         e.preventDefault()
-        if (usernameRefs === undefined) {
+        if (usernameRefs.value === undefined) {
+            console.log(usernameRefs.value)
             addReview(currentUser, reviewRefs.value)
         } else {
+            console.log(usernameRefs.value)
             addReview(usernameRefs.value, reviewRefs.value)
         }
     }
 
     const userBodyOrFullForm = () => { 
 
-        if (currentUser !== '') {
+        if (currentUser !== (undefined || '' || null || "")) {
             return (
-                <div>
-                    <p>You logged in as: {currentUser}</p>
-                </div>
+                console.log(currentUser)
             )
         } else {
             return (
                 <form onSubmit={onSubmit}>
-                        <input 
-                          type="text" 
-                          placeholder="Username" 
-                          ref={el => usernameRefs = el} />
-                        <textarea 
-                           type="text"
-                           placeholder="Write your review..."
-                           ref={el => reviewRefs = el} 
-                           className="form-control" />
-                        <span className="input-group-btn">
-                          <button type="submit" className="btn btn-info">
-                             Sumbit
-                          </button>
-                        </span>
+                    <input 
+                      type="text" 
+                      placeholder="Username" 
+                      ref={el => usernameRefs = el} />
+                    <textarea 
+                       type="text"
+                       placeholder="Write your review..."
+                       ref={el => reviewRefs = el} 
+                       className="form-control" />
+                    <span className="input-group-btn">
+                      <button type="submit" className="btn btn-info">
+                         Sumbit
+                      </button>
+                    </span>
                 </form>
             )
         }
     }
 
     const reviewBodyOrReviewForm = () => {
-
-
         
         if (currentReview !== '') {
             return (

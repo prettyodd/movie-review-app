@@ -1,20 +1,13 @@
 import React from 'react'
 
-class Login extends React.Component {
+const Login = ({ currentUser, logOut=f=>f }) => {
 
-    onSubmit(e) {
-        e.prevent.default()
-        this.props.logInUser(this.refs.usernameRefs.value, this.refs.passwordRefs.value)
-    }
-
-    render() {
-        return (
-            <form onSubmit={this.onSubmit}>
-                <input type="string" placeholder="Name" refs="usernameRefs" />
-                <input placeholder="password" refs="passwordRefs"/>
-            </form>
-        )
-    }
+    return (
+        <div>
+        <p>You logged in as: {currentUser}</p>
+        <a onClick={logOut}>Log out</a>
+        </div>
+    )
 }
 
 export default Login

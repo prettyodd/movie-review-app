@@ -14,9 +14,10 @@ const MovieList = ({ lists=[], currentUser }) => {
                         </div>
                         <Link 
                             to={{
-                                pathname: `/movie/${list.id}`,
-                                locationState: { currentUser: currentUser }
-                            }}>Review</Link>
+                            pathname: `/movie/${list.id}`,
+                            locationState: { currentUser: currentUser }}}>
+                            Review
+                        </Link>
                 </div>
             )}
         </div>

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import MovieHeader from './movieHeader'
 import ReviewBody from './reviewBody'
 import ReviewList from './reviewList'
+import Login from './login'
 
 class GetMovie extends React.Component {
 
@@ -19,8 +20,16 @@ class GetMovie extends React.Component {
         }
     }
 
+    logOut = () => {
+        console.log('logged out')
+        this.setState({ currentUser: '', currentReview: '' })
+    }
+
     addReview = (usernameRefs, reviewRefs) => { // trigger when user submit review form
         let c = this
+        console.log(this.props.location.locationState.currentUser)
+        console.log(this.state.currentUser)
+        console.log(usernameRefs)
 
         if (!this.state.externalApiCall) { // if movie data available on local database, post a new review
             axios.post(`http://localhost:3000/api/movie/${this.props.match.params.id}/reviews`, {
@@ -39,6 +48,8 @@ class GetMovie extends React.Component {
                     currentUser: usernameRefs,
                     currentReview: reviewRefs,
                 })
+                console.log(usernameRefs)
+                console.log(c.state.currentUser)
             })
             .catch(function (error) {
                 console.log(error)
@@ -71,10 +82,11 @@ class GetMovie extends React.Component {
         }
     }
 
-    componentWillMount() {
-        if (this.props.location.locationState === undefined) {
+    componentWillMount() { // can't console.log any state here because component isn't mounted yet
+        if (this.props.location.locationState.currentUser === (undefined || '' || null || "")) {
             console.log('props.location undefined')
           } else {
+            console.log(this.props.location.locationState.currentUser)
             this.setState({ currentUser: this.props.location.locationState.currentUser })
           }
     }
@@ -135,17 +147,27 @@ class GetMovie extends React.Component {
             return (<p>No review yet.</p>)
         }
     }
-    
+
+    isLogin() {
+        if (this.state.currentUser !== (undefined || '' || null || "")) {
+            return (
+                <Login currentUser={this.state.currentUser} logOut={this.logOut} />
+            )
+        }
+    }
+     
     render () {
         return (
             <div className="App">
+                {this.isLogin()}
+                <Link 
+                  to={{
+                  pathname: `/`,
+                  locationState: { currentUser: this.state.currentUser }}}>
+                  Home
+                </Link>
                 {this.loading()}
                 <ReviewBody paramsId={this.props.match.params.id} currentUser={this.state.currentUser} currentReview={this.state.currentReview} addReview={this.addReview} />
-                <Link 
-                    to={{
-                        pathname: `/`,
-                        locationState: { currentUser: this.state.currentUser }
-                    }}>Home</Link>
                 {this.emptyReview()}
             </div>
         )

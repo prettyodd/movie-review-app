@@ -9507,8 +9507,7 @@
 	                    {
 	                        to: {
 	                            pathname: '/movie/' + list.id,
-	                            locationState: { currentUser: currentUser }
-	                        } },
+	                            locationState: { currentUser: currentUser } } },
 	                    'Review'
 	                )
 	            );
@@ -14083,17 +14082,21 @@
 	
 	var _reactRouterDom = __webpack_require__(/*! react-router-dom */ 56);
 	
-	var _movieHeader = __webpack_require__(/*! ./movieHeader */ 99);
+	var _movieHeader = __webpack_require__(/*! ./movieHeader */ 98);
 	
 	var _movieHeader2 = _interopRequireDefault(_movieHeader);
 	
-	var _reviewBody = __webpack_require__(/*! ./reviewBody */ 100);
+	var _reviewBody = __webpack_require__(/*! ./reviewBody */ 99);
 	
 	var _reviewBody2 = _interopRequireDefault(_reviewBody);
 	
-	var _reviewList = __webpack_require__(/*! ./reviewList */ 101);
+	var _reviewList = __webpack_require__(/*! ./reviewList */ 100);
 	
 	var _reviewList2 = _interopRequireDefault(_reviewList);
+	
+	var _login = __webpack_require__(/*! ./login */ 101);
+	
+	var _login2 = _interopRequireDefault(_login);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -14111,9 +14114,17 @@
 	
 	        var _this = _possibleConstructorReturn(this, (GetMovie.__proto__ || Object.getPrototypeOf(GetMovie)).call(this, props));
 	
+	        _this.logOut = function () {
+	            console.log('logged out');
+	            _this.setState({ currentUser: '', currentReview: '' });
+	        };
+	
 	        _this.addReview = function (usernameRefs, reviewRefs) {
 	            // trigger when user submit review form
 	            var c = _this;
+	            console.log(_this.props.location.locationState.currentUser);
+	            console.log(_this.state.currentUser);
+	            console.log(usernameRefs);
 	
 	            if (!_this.state.externalApiCall) {
 	                // if movie data available on local database, post a new review
@@ -14131,6 +14142,8 @@
 	                        currentUser: usernameRefs,
 	                        currentReview: reviewRefs
 	                    });
+	                    console.log(usernameRefs);
+	                    console.log(c.state.currentUser);
 	                }).catch(function (error) {
 	                    console.log(error);
 	                });
@@ -14172,9 +14185,11 @@
 	    _createClass(GetMovie, [{
 	        key: 'componentWillMount',
 	        value: function componentWillMount() {
-	            if (this.props.location.locationState === undefined) {
+	            // can't console.log any state here because component isn't mounted yet
+	            if (this.props.location.locationState.currentUser === (undefined || '' || null || "")) {
 	                console.log('props.location undefined');
 	            } else {
+	                console.log(this.props.location.locationState.currentUser);
 	                this.setState({ currentUser: this.props.location.locationState.currentUser });
 	            }
 	        }
@@ -14251,22 +14266,29 @@
 	            }
 	        }
 	    }, {
+	        key: 'isLogin',
+	        value: function isLogin() {
+	            if (this.state.currentUser !== (undefined || '' || null || "")) {
+	                return _react2.default.createElement(_login2.default, { currentUser: this.state.currentUser, logOut: this.logOut });
+	            }
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            return _react2.default.createElement(
 	                'div',
 	                { className: 'App' },
-	                this.loading(),
-	                _react2.default.createElement(_reviewBody2.default, { paramsId: this.props.match.params.id, currentUser: this.state.currentUser, currentReview: this.state.currentReview, addReview: this.addReview }),
+	                this.isLogin(),
 	                _react2.default.createElement(
 	                    _reactRouterDom.Link,
 	                    {
 	                        to: {
 	                            pathname: '/',
-	                            locationState: { currentUser: this.state.currentUser }
-	                        } },
+	                            locationState: { currentUser: this.state.currentUser } } },
 	                    'Home'
 	                ),
+	                this.loading(),
+	                _react2.default.createElement(_reviewBody2.default, { paramsId: this.props.match.params.id, currentUser: this.state.currentUser, currentReview: this.state.currentReview, addReview: this.addReview }),
 	                this.emptyReview()
 	            );
 	        }
@@ -14278,8 +14300,7 @@
 	exports.default = GetMovie;
 
 /***/ }),
-/* 98 */,
-/* 99 */
+/* 98 */
 /*!********************************************!*\
   !*** ./src/components/home/movieHeader.js ***!
   \********************************************/
@@ -14324,7 +14345,7 @@
 	exports.default = MovieHeader;
 
 /***/ }),
-/* 100 */
+/* 99 */
 /*!*******************************************!*\
   !*** ./src/components/home/reviewBody.js ***!
   \*******************************************/
@@ -14359,26 +14380,19 @@
 	
 	    var onSubmit = function onSubmit(e) {
 	        e.preventDefault();
-	        if (usernameRefs === undefined) {
+	        if (usernameRefs.value === undefined) {
+	            console.log(usernameRefs.value);
 	            addReview(currentUser, reviewRefs.value);
 	        } else {
+	            console.log(usernameRefs.value);
 	            addReview(usernameRefs.value, reviewRefs.value);
 	        }
 	    };
 	
 	    var userBodyOrFullForm = function userBodyOrFullForm() {
 	
-	        if (currentUser !== '') {
-	            return _react2.default.createElement(
-	                'div',
-	                null,
-	                _react2.default.createElement(
-	                    'p',
-	                    null,
-	                    'You logged in as: ',
-	                    currentUser
-	                )
-	            );
+	        if (currentUser !== (undefined || '' || null || "")) {
+	            return console.log(currentUser);
 	        } else {
 	            return _react2.default.createElement(
 	                'form',
@@ -14462,7 +14476,7 @@
 	exports.default = ReviewBody;
 
 /***/ }),
-/* 101 */
+/* 100 */
 /*!*******************************************!*\
   !*** ./src/components/home/reviewList.js ***!
   \*******************************************/
@@ -14514,6 +14528,52 @@
 	};
 	
 	exports.default = ReviewList;
+
+/***/ }),
+/* 101 */
+/*!**************************************!*\
+  !*** ./src/components/home/login.js ***!
+  \**************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var Login = function Login(_ref) {
+	    var currentUser = _ref.currentUser,
+	        _ref$logOut = _ref.logOut,
+	        logOut = _ref$logOut === undefined ? function (f) {
+	        return f;
+	    } : _ref$logOut;
+	
+	
+	    return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(
+	            'p',
+	            null,
+	            'You logged in as: ',
+	            currentUser
+	        ),
+	        _react2.default.createElement(
+	            'a',
+	            { onClick: logOut },
+	            'Log out'
+	        )
+	    );
+	};
+	
+	exports.default = Login;
 
 /***/ })
 /******/ ]);
