@@ -32,7 +32,18 @@ const ReviewBody = ({ paramsId, movie, currentUser, addReview=f=>f }) => {
                     )
                 } else {
                     return (
-                        console.log('currentUser exist, movie.reviews exist & but currentUser review not exist')
+                        <form onSubmit={onSubmit}>
+                        <textarea 
+                           type="text"
+                           placeholder="Write your review..."
+                           ref={el => reviewRefs = el} // can't use this.refs on stateless component
+                           className="form-control" />
+                        <span className="input-group-btn">
+                          <button type="submit" className="btn btn-info">
+                             Sumbit
+                          </button>
+                        </span>
+                        </form>
                     )
                 }
             } else {
@@ -81,7 +92,7 @@ const ReviewBody = ({ paramsId, movie, currentUser, addReview=f=>f }) => {
             )
             console.log(movie.reviews)
         } else {
-            console.log('should not run when no review exist')
+            console.log('reduce method will executed for because review exist')
             console.log(movie.reviews)
 
             const ReviewObj = movie.reviews.reduce((obj, v) => {

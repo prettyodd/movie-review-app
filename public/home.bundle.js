@@ -14090,11 +14090,7 @@
 	
 	var _reviewBody2 = _interopRequireDefault(_reviewBody);
 	
-	var _reviewList = __webpack_require__(/*! ./reviewList */ 100);
-	
-	var _reviewList2 = _interopRequireDefault(_reviewList);
-	
-	var _login = __webpack_require__(/*! ./login */ 101);
+	var _login = __webpack_require__(/*! ./login */ 100);
 	
 	var _login2 = _interopRequireDefault(_login);
 	
@@ -14126,7 +14122,7 @@
 	            console.log(_this.state.currentUser);
 	            console.log(usernameRefs);
 	
-	            if (!_this.state.externalApiCall) {
+	            if (!_this.state.externalApiPost) {
 	                // if movie data available on local database, post a new review
 	                _axios2.default.post('http://localhost:3000/api/movie/' + _this.props.match.params.id + '/reviews', {
 	                    reviews: {
@@ -14135,6 +14131,7 @@
 	                    }
 	                }).then(function (response) {
 	                    console.log(response);
+	                    console.log(c.props.match.params.id);
 	                    c.setState({
 	                        movie: _extends({}, c.state.movie, {
 	                            reviews: response.data.reviews
@@ -14154,8 +14151,8 @@
 	                    title: c.state.movie.title,
 	                    overview: c.state.movie.overview,
 	                    reviews: [{
-	                        user: username,
-	                        review: review
+	                        user: usernameRefs,
+	                        review: reviewRefs
 	                    }]
 	                }).then(function (response) {
 	                    console.log(response);
@@ -14175,6 +14172,7 @@
 	            loading: true,
 	            movie: { id: '', title: '', overview: '', reviews: [] },
 	            externalApiCall: false,
+	            externalApiPost: false,
 	            emptyReview: true,
 	            currentUser: '',
 	            currentReview: ''
@@ -14227,7 +14225,7 @@
 	
 	                _axios2.default.get('https://api.themoviedb.org/3/movie/' + this.props.match.params.id + '?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US') // Get data from external database
 	                .then(function (response) {
-	                    c.setState({ movie: response.data, loading: false, externalApiCall: false });
+	                    c.setState({ movie: response.data, loading: false, externalApiCall: false, externalApiPost: true });
 	                    console.log('request made from external db');
 	                }).catch(function (error) {
 	                    console.log(error);
@@ -14247,19 +14245,10 @@
 	                return _react2.default.createElement(_movieHeader2.default, { movie: this.state.movie });
 	            }
 	        }
-	
-	        //emptyReview() { // if review exist
-	        //    if (this.state.movie.reviews[0] === undefined) {
-	        //        return (<p>No review yet.</p>)
-	        //    } else {
-	        //        return (<ReviewList movie={this.state.movie} currentUser={this.state.currentUser} />)
-	        //    }
-	        //}
-	
 	    }, {
 	        key: 'isLogin',
 	        value: function isLogin() {
-	            if (this.state.currentUser !== (undefined || '' || null || "")) {
+	            if (this.state.currentUser) {
 	                return _react2.default.createElement(_login2.default, { currentUser: this.state.currentUser, logOut: this.logOut });
 	            }
 	        }
@@ -14399,7 +14388,26 @@
 	                        ReviewObj[currentUser].review
 	                    );
 	                } else {
-	                    return console.log('currentUser exist, movie.reviews exist & but currentUser review not exist');
+	                    return _react2.default.createElement(
+	                        'form',
+	                        { onSubmit: onSubmit },
+	                        _react2.default.createElement('textarea', {
+	                            type: 'text',
+	                            placeholder: 'Write your review...',
+	                            ref: function ref(el) {
+	                                return reviewRefs = el;
+	                            } // can't use this.refs on stateless component
+	                            , className: 'form-control' }),
+	                        _react2.default.createElement(
+	                            'span',
+	                            { className: 'input-group-btn' },
+	                            _react2.default.createElement(
+	                                'button',
+	                                { type: 'submit', className: 'btn btn-info' },
+	                                'Sumbit'
+	                            )
+	                        )
+	                    );
 	                }
 	            } else {
 	                return _react2.default.createElement(
@@ -14463,7 +14471,7 @@
 	            );
 	            console.log(movie.reviews);
 	        } else {
-	            console.log('should not run when no review exist');
+	            console.log('reduce method will executed for because review exist');
 	            console.log(movie.reviews);
 	
 	            var ReviewObj = movie.reviews.reduce(function (obj, v) {
@@ -14509,121 +14517,6 @@
 
 /***/ }),
 /* 100 */
-/*!*******************************************!*\
-  !*** ./src/components/home/reviewList.js ***!
-  \*******************************************/
-/***/ (function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _react = __webpack_require__(/*! react */ 1);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var ReviewList = function ReviewList(_ref) {
-	    var movie = _ref.movie,
-	        currentUser = _ref.currentUser;
-	
-	
-	    console.log(movie.reviews[150]);
-	
-	    var reviewRefs = void 0,
-	        usernameRefs = void 0;
-	
-	    var onSubmit = function onSubmit(e) {
-	        e.preventDefault();
-	        if (usernameRefs.value === undefined) {
-	            console.log(usernameRefs.value);
-	            addReview(currentUser, reviewRefs.value);
-	        } else {
-	            console.log(usernameRefs.value);
-	            addReview(usernameRefs.value, reviewRefs.value);
-	        }
-	    };
-	
-	    var ReviewObj = movie.reviews.reduce(function (obj, v) {
-	        // this is how we assign function to a variable and the function can be called just by calling the {ReviewObj}
-	        obj[v.user] = v;
-	        return obj;
-	    }, {});
-	
-	    console.log(ReviewObj);
-	    console.log(ReviewObj[currentUser]);
-	
-	    var UserReview = function UserReview() {
-	        if (ReviewObj[currentUser] === undefined) {
-	            return _react2.default.createElement(
-	                "form",
-	                { onSubmit: onSubmit },
-	                _react2.default.createElement("textarea", {
-	                    type: "text",
-	                    placeholder: "Write your review...",
-	                    ref: function ref(el) {
-	                        return reviewRefs = el;
-	                    } // can't use this.refs on stateless component
-	                    , className: "form-control" }),
-	                _react2.default.createElement(
-	                    "span",
-	                    { className: "input-group-btn" },
-	                    _react2.default.createElement(
-	                        "button",
-	                        { type: "submit", className: "btn btn-info" },
-	                        "Sumbit"
-	                    )
-	                )
-	            );
-	        } else {
-	            return _react2.default.createElement(
-	                "span",
-	                null,
-	                "Review: ",
-	                ReviewObj[currentUser].review,
-	                " by ",
-	                ReviewObj[currentUser].user
-	            );
-	        }
-	    };
-	
-	    return _react2.default.createElement(
-	        "div",
-	        null,
-	        UserReview(),
-	        _react2.default.createElement(
-	            "div",
-	            null,
-	            _react2.default.createElement(
-	                "h3",
-	                null,
-	                "Review list:"
-	            ),
-	            Object.keys(ReviewObj).map(function (key, i) {
-	                return _react2.default.createElement(
-	                    "div",
-	                    { key: i, className: "Movies" },
-	                    _react2.default.createElement(
-	                        "span",
-	                        null,
-	                        "Review: ",
-	                        ReviewObj[key].review,
-	                        " by ",
-	                        ReviewObj[key].user
-	                    )
-	                );
-	            })
-	        )
-	    );
-	};
-	
-	exports.default = ReviewList;
-
-/***/ }),
-/* 101 */
 /*!**************************************!*\
   !*** ./src/components/home/login.js ***!
   \**************************************/

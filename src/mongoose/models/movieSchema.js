@@ -14,7 +14,8 @@ export const MovieSchema = new Schema({
     },
     reviews: [{
         user: {
-            type: String
+            type: String,
+            unique: true
         },
         review: {
             type: String

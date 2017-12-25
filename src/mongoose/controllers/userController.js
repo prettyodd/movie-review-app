@@ -48,13 +48,14 @@ export const editReview = (req, res) => {
 
 export const addReview = (req, res) => {
     Movie.findOneAndUpdate(
-        req.params.id,
+        {id: req.params.id},
         {$push: req.body},
         {safe: true, upsert: true, new: true},
         (err, movie) => {
             if (err) {
                 res.send(err)
             }
+            console.log(req.params.id)
             res.json(movie)
         }
     )

@@ -3,7 +3,6 @@ import axios from 'axios'
 import { Link } from 'react-router-dom'
 import MovieHeader from './movieHeader'
 import ReviewBody from './reviewBody'
-import ReviewList from './reviewList'
 import Login from './login'
 
 class GetMovie extends React.Component {
@@ -14,6 +13,7 @@ class GetMovie extends React.Component {
           loading: true,
           movie: {id: '', title: '', overview: '', reviews: []},
           externalApiCall: false,
+          externalApiPost: false,
           emptyReview: true,
           currentUser: '',
           currentReview: ''
@@ -31,7 +31,7 @@ class GetMovie extends React.Component {
         console.log(this.state.currentUser)
         console.log(usernameRefs)
 
-        if (!this.state.externalApiCall) { // if movie data available on local database, post a new review
+        if (!this.state.externalApiPost) { // if movie data available on local database, post a new review
             axios.post(`http://localhost:3000/api/movie/${this.props.match.params.id}/reviews`, {
                 reviews: {
                     user: usernameRefs,
@@ -40,6 +40,7 @@ class GetMovie extends React.Component {
             })
             .then(function (response) {
                 console.log(response)
+                console.log(c.props.match.params.id)
                 c.setState({
                     movie: {
                         ...c.state.movie,
@@ -62,8 +63,8 @@ class GetMovie extends React.Component {
                 overview: c.state.movie.overview,
                 reviews: [
                     {
-                        user: username,
-                        review: review
+                        user: usernameRefs,
+                        review: reviewRefs
                     }
                 ]
             })
@@ -119,7 +120,7 @@ class GetMovie extends React.Component {
 
             axios.get(`https://api.themoviedb.org/3/movie/${this.props.match.params.id}?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US`) // Get data from external database
             .then(function (response) {
-                c.setState({ movie: response.data, loading: false, externalApiCall: false })
+                c.setState({ movie: response.data, loading: false, externalApiCall: false, externalApiPost: true })
                 console.log('request made from external db')
             })
             .catch(function (error) {
@@ -136,16 +137,8 @@ class GetMovie extends React.Component {
         }
     }
 
-    //emptyReview() { // if review exist
-    //    if (this.state.movie.reviews[0] === undefined) {
-    //        return (<p>No review yet.</p>)
-    //    } else {
-    //        return (<ReviewList movie={this.state.movie} currentUser={this.state.currentUser} />)
-    //    }
-    //}
-
     isLogin() {
-        if (this.state.currentUser !== (undefined || '' || null || "")) {
+        if (this.state.currentUser) {
             return (
                 <Login currentUser={this.state.currentUser} logOut={this.logOut} />
             )
