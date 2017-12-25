@@ -14173,7 +14173,7 @@
 	
 	        _this.state = {
 	            loading: true,
-	            movie: '',
+	            movie: { id: '', title: '', overview: '', reviews: [{ user: '', review: '' }] },
 	            externalApiCall: false,
 	            emptyReview: true,
 	            currentUser: '',
@@ -14202,12 +14202,8 @@
 	            .then(function (response) {
 	                if (response.data) {
 	                    c.setState({ movie: response.data, loading: false });
-	                    if (c.state.currentUser !== '') {
-	                        c.setState({ movie: response.data, loading: false });
-	                    } else {
-	                        c.setState({ movie: response.data, loading: false });
-	                    }
 	                    console.log('request made from local db');
+	                    console.log(c.state.movie.reviews);
 	                } else {
 	                    c.setState({ externalApiCall: true }); // ..if not, allow for the GET request for external database
 	                }
@@ -14255,7 +14251,7 @@
 	        key: 'emptyReview',
 	        value: function emptyReview() {
 	            // if review exist
-	            if (this.state.movie.reviews) {
+	            if (this.state.movie.reviews.review !== '') {
 	                return _react2.default.createElement(_reviewList2.default, { movie: this.state.movie });
 	            } else {
 	                return _react2.default.createElement(
@@ -14497,6 +14493,10 @@
 	var ReviewList = function ReviewList(_ref) {
 	    var movie = _ref.movie;
 	
+	
+	    var Movie = movie;
+	    console.log(Movie);
+	    console.log(movie);
 	
 	    return _react2.default.createElement(
 	        "div",

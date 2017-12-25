@@ -1,6 +1,10 @@
 import React from 'react' 
 
 const ReviewList = ({ movie }) => {
+
+    let Movie = movie
+    console.log(Movie)
+    console.log(movie)
     
     return (
         <div>

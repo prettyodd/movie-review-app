@@ -12,7 +12,7 @@ class GetMovie extends React.Component {
         super(props)
         this.state = {
           loading: true,
-          movie: '',
+          movie: {id: '', title: '', overview: '', reviews: [{user: '', review: ''}]},
           externalApiCall: false,
           emptyReview: true,
           currentUser: '',
@@ -98,12 +98,8 @@ class GetMovie extends React.Component {
             .then(function (response) {
                 if (response.data) {
                     c.setState({ movie: response.data, loading: false })
-                    if (c.state.currentUser !== '') {
-                        c.setState({ movie: response.data, loading: false })
-                    } else {
-                        c.setState({ movie: response.data, loading: false })
-                    }
                     console.log('request made from local db')
+                    console.log(c.state.movie.reviews)
                 } else {
                     c.setState({ externalApiCall: true }) // ..if not, allow for the GET request for external database
                 }
@@ -141,7 +137,7 @@ class GetMovie extends React.Component {
     }
 
     emptyReview() { // if review exist
-        if (this.state.movie.reviews) { 
+        if (this.state.movie.reviews.review !== '') { 
             return (<ReviewList movie={this.state.movie} />)
         } else {
             return (<p>No review yet.</p>)
