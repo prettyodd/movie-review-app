@@ -12,7 +12,7 @@ class GetMovie extends React.Component {
         super(props)
         this.state = {
           loading: true,
-          movie: {id: '', title: '', overview: '', reviews: [{user: '', review: ''}]},
+          movie: {id: '', title: '', overview: '', reviews: []},
           externalApiCall: false,
           emptyReview: true,
           currentUser: '',
@@ -136,13 +136,13 @@ class GetMovie extends React.Component {
         }
     }
 
-    emptyReview() { // if review exist
-        if (this.state.movie.reviews.review !== '') { 
-            return (<ReviewList movie={this.state.movie} />)
-        } else {
-            return (<p>No review yet.</p>)
-        }
-    }
+    //emptyReview() { // if review exist
+    //    if (this.state.movie.reviews[0] === undefined) {
+    //        return (<p>No review yet.</p>)
+    //    } else {
+    //        return (<ReviewList movie={this.state.movie} currentUser={this.state.currentUser} />)
+    //    }
+    //}
 
     isLogin() {
         if (this.state.currentUser !== (undefined || '' || null || "")) {
@@ -163,8 +163,7 @@ class GetMovie extends React.Component {
                   Home
                 </Link>
                 {this.loading()}
-                <ReviewBody paramsId={this.props.match.params.id} currentUser={this.state.currentUser} currentReview={this.state.currentReview} addReview={this.addReview} />
-                {this.emptyReview()}
+                <ReviewBody paramsId={this.props.match.params.id} movie={this.state.movie} currentUser={this.state.currentUser} addReview={this.addReview} />
             </div>
         )
     }
