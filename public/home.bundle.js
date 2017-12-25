@@ -14110,6 +14110,10 @@
 	
 	        var _this = _possibleConstructorReturn(this, (GetMovie.__proto__ || Object.getPrototypeOf(GetMovie)).call(this, props));
 	
+	        _this.editR = function () {
+	            _this.setState({ editReview: true });
+	        };
+	
 	        _this.logOut = function () {
 	            console.log('logged out');
 	            _this.setState({ currentUser: '', currentReview: '' });
@@ -14137,7 +14141,8 @@
 	                            reviews: response.data.reviews
 	                        }),
 	                        currentUser: usernameRefs,
-	                        currentReview: reviewRefs
+	                        currentReview: reviewRefs,
+	                        editReview: false
 	                    });
 	                    console.log(usernameRefs);
 	                    console.log(c.state.currentUser);
@@ -14160,7 +14165,8 @@
 	                        movie: response.data,
 	                        loading: false,
 	                        currentReview: reviewRefs,
-	                        currentUser: usernameRefs
+	                        currentUser: usernameRefs,
+	                        editReview: false
 	                    });
 	                }).catch(function (error) {
 	                    console.log(error);
@@ -14175,7 +14181,8 @@
 	            externalApiPost: false,
 	            emptyReview: true,
 	            currentUser: '',
-	            currentReview: ''
+	            currentReview: '',
+	            editReview: false
 	        };
 	        return _this;
 	    }
@@ -14268,7 +14275,7 @@
 	                    'Home'
 	                ),
 	                this.loading(),
-	                _react2.default.createElement(_reviewBody2.default, { paramsId: this.props.match.params.id, movie: this.state.movie, currentUser: this.state.currentUser, addReview: this.addReview })
+	                _react2.default.createElement(_reviewBody2.default, { paramsId: this.props.match.params.id, movie: this.state.movie, currentUser: this.state.currentUser, addReview: this.addReview, editReview: this.state.editReview, editRev: this.editR })
 	            );
 	        }
 	    }]);
@@ -14348,6 +14355,11 @@
 	    var paramsId = _ref.paramsId,
 	        movie = _ref.movie,
 	        currentUser = _ref.currentUser,
+	        editReview = _ref.editReview,
+	        _ref$editRev = _ref.editRev,
+	        editRev = _ref$editRev === undefined ? function (f) {
+	        return f;
+	    } : _ref$editRev,
 	        _ref$addReview = _ref.addReview,
 	        addReview = _ref$addReview === undefined ? function (f) {
 	        return f;
@@ -14367,6 +14379,29 @@
 	        }
 	    };
 	
+	    var reviewForm = function reviewForm() {
+	        return _react2.default.createElement(
+	            'form',
+	            { onSubmit: onSubmit },
+	            _react2.default.createElement('textarea', {
+	                type: 'text',
+	                placeholder: 'Write your review...',
+	                ref: function ref(el) {
+	                    return reviewRefs = el;
+	                } // can't use this.refs on stateless component
+	                , className: 'form-control' }),
+	            _react2.default.createElement(
+	                'span',
+	                { className: 'input-group-btn' },
+	                _react2.default.createElement(
+	                    'button',
+	                    { type: 'submit', className: 'btn btn-info' },
+	                    'Sumbit'
+	                )
+	            )
+	        );
+	    };
+	
 	    var userReviewAndFormArea = function userReviewAndFormArea() {
 	        // logic for user review info & full form
 	        if (currentUser) {
@@ -14381,55 +14416,33 @@
 	                }, {});
 	
 	                if (ReviewObj[currentUser]) {
-	                    return _react2.default.createElement(
-	                        'span',
-	                        null,
-	                        'Your Review: ',
-	                        ReviewObj[currentUser].review
-	                    );
-	                } else {
-	                    return _react2.default.createElement(
-	                        'form',
-	                        { onSubmit: onSubmit },
-	                        _react2.default.createElement('textarea', {
-	                            type: 'text',
-	                            placeholder: 'Write your review...',
-	                            ref: function ref(el) {
-	                                return reviewRefs = el;
-	                            } // can't use this.refs on stateless component
-	                            , className: 'form-control' }),
-	                        _react2.default.createElement(
-	                            'span',
-	                            { className: 'input-group-btn' },
+	                    if (editReview) {
+	                        console.log(editReview);
+	                        return reviewForm();
+	                    } else {
+	                        return _react2.default.createElement(
+	                            'div',
+	                            null,
 	                            _react2.default.createElement(
-	                                'button',
-	                                { type: 'submit', className: 'btn btn-info' },
-	                                'Sumbit'
+	                                'span',
+	                                null,
+	                                'Your Review: ',
+	                                ReviewObj[currentUser].review
+	                            ),
+	                            _react2.default.createElement(
+	                                'a',
+	                                { onClick: editRev },
+	                                'EDIT'
 	                            )
-	                        )
-	                    );
+	                        );
+	                    }
+	                } else {
+	                    console.log('2');
+	                    return reviewForm();
 	                }
 	            } else {
-	                return _react2.default.createElement(
-	                    'form',
-	                    { onSubmit: onSubmit },
-	                    _react2.default.createElement('textarea', {
-	                        type: 'text',
-	                        placeholder: 'Write your review...',
-	                        ref: function ref(el) {
-	                            return reviewRefs = el;
-	                        } // can't use this.refs on stateless component
-	                        , className: 'form-control' }),
-	                    _react2.default.createElement(
-	                        'span',
-	                        { className: 'input-group-btn' },
-	                        _react2.default.createElement(
-	                            'button',
-	                            { type: 'submit', className: 'btn btn-info' },
-	                            'Sumbit'
-	                        )
-	                    )
-	                );
+	                console.log('3');
+	                return reviewForm();
 	            }
 	        } else {
 	            return _react2.default.createElement(

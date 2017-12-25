@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-const ReviewBody = ({ paramsId, movie, currentUser, addReview=f=>f }) => {
+const ReviewBody = ({ paramsId, movie, currentUser, editReview, editRev=f=>f, addReview=f=>f }) => {
 
     let reviewRefs, usernameRefs
 
@@ -13,6 +13,23 @@ const ReviewBody = ({ paramsId, movie, currentUser, addReview=f=>f }) => {
             console.log(usernameRefs.value)
             addReview(usernameRefs.value, reviewRefs.value)
         }
+    }
+
+    const reviewForm = () => {
+        return (
+            <form onSubmit={onSubmit}>
+            <textarea 
+               type="text"
+               placeholder="Write your review..."
+               ref={el => reviewRefs = el} // can't use this.refs on stateless component
+               className="form-control" />
+            <span className="input-group-btn">
+              <button type="submit" className="btn btn-info">
+                 Sumbit
+              </button>
+            </span>
+            </form>
+        )
     }
 
     const userReviewAndFormArea = () => { // logic for user review info & full form
@@ -27,39 +44,29 @@ const ReviewBody = ({ paramsId, movie, currentUser, addReview=f=>f }) => {
                                     }, {})
 
                 if (ReviewObj[currentUser]) {
-                    return (
-                        <span>Your Review: {ReviewObj[currentUser].review}</span>
-                    )
+                    if (editReview) {
+                        console.log(editReview)
+                        return (
+                            reviewForm()
+                        )
+                    } else {
+                        return (
+                            <div>
+                                <span>Your Review: {ReviewObj[currentUser].review}</span>
+                                <a onClick={editRev}>EDIT</a>
+                            </div>
+                        )
+                    }
                 } else {
+                    console.log('2')
                     return (
-                        <form onSubmit={onSubmit}>
-                        <textarea 
-                           type="text"
-                           placeholder="Write your review..."
-                           ref={el => reviewRefs = el} // can't use this.refs on stateless component
-                           className="form-control" />
-                        <span className="input-group-btn">
-                          <button type="submit" className="btn btn-info">
-                             Sumbit
-                          </button>
-                        </span>
-                        </form>
+                        reviewForm()
                     )
                 }
             } else {
+                console.log('3')
                 return (
-                    <form onSubmit={onSubmit}>
-                    <textarea 
-                       type="text"
-                       placeholder="Write your review..."
-                       ref={el => reviewRefs = el} // can't use this.refs on stateless component
-                       className="form-control" />
-                    <span className="input-group-btn">
-                      <button type="submit" className="btn btn-info">
-                         Sumbit
-                      </button>
-                    </span>
-                    </form>
+                    reviewForm()
                 )
             }
         } else {

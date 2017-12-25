@@ -11,13 +11,18 @@ class GetMovie extends React.Component {
         super(props)
         this.state = {
           loading: true,
-          movie: {id: '', title: '', overview: '', reviews: []},
+          movie: { id: '', title: '', overview: '', reviews: [] },
           externalApiCall: false,
           externalApiPost: false,
           emptyReview: true,
           currentUser: '',
-          currentReview: ''
+          currentReview: '',
+          editReview: false
         }
+    }
+
+    editR = () => {
+        this.setState({ editReview: true })
     }
 
     logOut = () => {
@@ -48,6 +53,7 @@ class GetMovie extends React.Component {
                     },
                     currentUser: usernameRefs,
                     currentReview: reviewRefs,
+                    editReview: false
                 })
                 console.log(usernameRefs)
                 console.log(c.state.currentUser)
@@ -74,7 +80,8 @@ class GetMovie extends React.Component {
                     movie: response.data,
                     loading: false,
                     currentReview: reviewRefs,
-                    currentUser: usernameRefs
+                    currentUser: usernameRefs,
+                    editReview: false
                 })
             })
             .catch(function (error) {
@@ -156,7 +163,7 @@ class GetMovie extends React.Component {
                   Home
                 </Link>
                 {this.loading()}
-                <ReviewBody paramsId={this.props.match.params.id} movie={this.state.movie} currentUser={this.state.currentUser} addReview={this.addReview} />
+                <ReviewBody paramsId={this.props.match.params.id} movie={this.state.movie} currentUser={this.state.currentUser} addReview={this.addReview} editReview={this.state.editReview} editRev={this.editR} />
             </div>
         )
     }
