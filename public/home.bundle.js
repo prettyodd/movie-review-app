@@ -14173,13 +14173,8 @@
 	                    });
 	                } else if (actionType === 'delete') {
 	                    console.log(response.data);
-	                    c.setState({
-	                        movie: _extends({}, c.state.movie, {
-	                            reviews: response.data.reviews
-	                        }),
-	                        currentUser: usernameRefs,
-	                        editReview: true
-	                    });
+	                    c.setState({ editReview: true });
+	                    c.localDBCall();
 	                } else {
 	                    c.setState({
 	                        movie: response.data,
@@ -14191,6 +14186,23 @@
 	                }
 	                console.log(usernameRefs);
 	                console.log(c.state.currentUser);
+	            }).catch(function (error) {
+	                console.log(error);
+	            });
+	        };
+	
+	        _this.localDBCall = function () {
+	            var c = _this;
+	
+	            _axios2.default.get('http://localhost:3000/api/movie/' + _this.props.match.params.id) // check if movie exist in local database..
+	            .then(function (response) {
+	                if (response.data) {
+	                    c.setState({ movie: response.data, loading: false });
+	                    console.log('request made from local db');
+	                    console.log(c.state.movie.reviews);
+	                } else {
+	                    c.setState({ externalApiCall: true }); // ..if not, allow for the GET request for external database
+	                }
 	            }).catch(function (error) {
 	                console.log(error);
 	            });
@@ -14223,28 +14235,7 @@
 	    }, {
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
-	            var c = this;
-	
-	            _axios2.default.get('http://localhost:3000/api/movie/' + this.props.match.params.id) // check if movie exist in local database..
-	            .then(function (response) {
-	                if (response.data) {
-	                    c.setState({ movie: response.data, loading: false });
-	                    console.log('request made from local db');
-	                    console.log(c.state.movie.reviews);
-	                } else {
-	                    c.setState({ externalApiCall: true }); // ..if not, allow for the GET request for external database
-	                }
-	            }).catch(function (error) {
-	                console.log(error);
-	            });
-	
-	            if (!this.state.movie) {
-	                return _react2.default.createElement(
-	                    'div',
-	                    null,
-	                    'Sorry, but the movie was not found'
-	                );
-	            }
+	            this.localDBCall();
 	        }
 	    }, {
 	        key: 'componentDidUpdate',

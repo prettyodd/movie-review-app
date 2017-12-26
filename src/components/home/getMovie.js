@@ -84,14 +84,8 @@ class GetMovie extends React.Component {
                     })
                 } else if (actionType === 'delete') {
                     console.log(response.data)
-                    c.setState({
-                        movie: {
-                            ...c.state.movie,
-                            reviews: response.data.reviews
-                        },
-                        currentUser: usernameRefs,
-                        editReview: true
-                    })
+                    c.setState({ editReview: true })
+                    c.localDBCall()
                 } else {
                     c.setState({
                         movie: response.data,
@@ -109,6 +103,24 @@ class GetMovie extends React.Component {
             })
     }
 
+    localDBCall = () => {
+        let c = this
+
+        axios.get(`http://localhost:3000/api/movie/${this.props.match.params.id}`) // check if movie exist in local database..
+        .then(function (response) {
+            if (response.data) {
+                c.setState({ movie: response.data, loading: false })
+                console.log('request made from local db')
+                console.log(c.state.movie.reviews)
+            } else {
+                c.setState({ externalApiCall: true }) // ..if not, allow for the GET request for external database
+            }
+        })
+        .catch(function (error) {
+            console.log(error)
+        })
+    }
+
     componentWillMount() { // can't console.log any state here because component isn't mounted yet
         if (!this.props.location.locationState.currentUser) {
             console.log('props.location undefined')
@@ -119,25 +131,7 @@ class GetMovie extends React.Component {
     }
 
     componentDidMount() {
-        let c = this
-
-        axios.get(`http://localhost:3000/api/movie/${this.props.match.params.id}`) // check if movie exist in local database..
-            .then(function (response) {
-                if (response.data) {
-                    c.setState({ movie: response.data, loading: false })
-                    console.log('request made from local db')
-                    console.log(c.state.movie.reviews)
-                } else {
-                    c.setState({ externalApiCall: true }) // ..if not, allow for the GET request for external database
-                }
-            })
-            .catch(function (error) {
-                console.log(error)
-            })
-
-        if (!this.state.movie) {
-          return <div>Sorry, but the movie was not found</div>
-        }
+        this.localDBCall()
     }
 
     componentDidUpdate() { 
