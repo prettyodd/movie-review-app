@@ -14110,32 +14110,59 @@
 	
 	        var _this = _possibleConstructorReturn(this, (GetMovie.__proto__ || Object.getPrototypeOf(GetMovie)).call(this, props));
 	
-	        _this.editR = function () {
-	            _this.setState({ editReview: true });
-	        };
-	
 	        _this.logOut = function () {
 	            console.log('logged out');
 	            _this.setState({ currentUser: '', currentReview: '' });
 	        };
 	
-	        _this.addReview = function (usernameRefs, reviewRefs) {
-	            // trigger when user submit review form
-	            var c = _this;
-	            console.log(_this.props.location.locationState.currentUser);
-	            console.log(_this.state.currentUser);
-	            console.log(usernameRefs);
+	        _this.onEdit = function () {
+	            _this.setState({ editReview: true, currentReview: '' });
+	        };
 	
-	            if (!_this.state.externalApiPost) {
-	                // if movie data available on local database, post a new review
-	                _axios2.default.post('http://localhost:3000/api/movie/' + _this.props.match.params.id + '/reviews', {
-	                    reviews: {
-	                        user: usernameRefs,
-	                        review: reviewRefs
-	                    }
-	                }).then(function (response) {
+	        _this.addReview = function (usernameRefs, reviewRefs, actionType) {
+	            // trigger when user submit review form
+	
+	            var Url = void 0,
+	                RequestData = void 0,
+	                ResponseData = void 0,
+	                c = _this;
+	
+	            switch (actionType) {
+	                case 'update':
+	                    Url = 'http://localhost:3000/api/movie/' + _this.props.match.params.id + '/reviews';
+	                    console.log(actionType);
+	                    RequestData = { reviews: {
+	                            user: usernameRefs,
+	                            review: reviewRefs
+	                        } };
+	                    console.log(RequestData);
+	                    break;
+	                case 'delete':
+	                    Url = 'http://localhost:3000/api/movie/' + _this.props.match.params.id + '/delete-user-review/' + usernameRefs;
+	                    console.log(actionType);
+	                    RequestData = { reviews: {
+	                            user: usernameRefs,
+	                            review: reviewRefs
+	                        } };
+	                    break;
+	                case 'addNewMovie':
+	                    Url = 'http://localhost:3000/api/movie/' + _this.props.match.params.id;
+	                    console.log(actionType);
+	                    RequestData = { id: c.props.match.params.id,
+	                        title: c.state.movie.title,
+	                        overview: c.state.movie.overview,
+	                        reviews: [{
+	                            user: usernameRefs,
+	                            review: reviewRefs
+	                        }] };
+	                    break;
+	            }
+	
+	            _axios2.default.post(Url, RequestData).then(function (response) {
+	                if (actionType === 'update') {
 	                    console.log(response);
 	                    console.log(c.props.match.params.id);
+	                    console.log(RequestData);
 	                    c.setState({
 	                        movie: _extends({}, c.state.movie, {
 	                            reviews: response.data.reviews
@@ -14144,23 +14171,16 @@
 	                        currentReview: reviewRefs,
 	                        editReview: false
 	                    });
-	                    console.log(usernameRefs);
-	                    console.log(c.state.currentUser);
-	                }).catch(function (error) {
-	                    console.log(error);
-	                });
-	            } else {
-	                // post new movie with review
-	                _axios2.default.post('http://localhost:3000/api/movie/' + _this.props.match.params.id, {
-	                    id: c.props.match.params.id,
-	                    title: c.state.movie.title,
-	                    overview: c.state.movie.overview,
-	                    reviews: [{
-	                        user: usernameRefs,
-	                        review: reviewRefs
-	                    }]
-	                }).then(function (response) {
-	                    console.log(response);
+	                } else if (actionType === 'delete') {
+	                    console.log(response.data);
+	                    c.setState({
+	                        movie: _extends({}, c.state.movie, {
+	                            reviews: response.data.reviews
+	                        }),
+	                        currentUser: usernameRefs,
+	                        editReview: true
+	                    });
+	                } else {
 	                    c.setState({
 	                        movie: response.data,
 	                        loading: false,
@@ -14168,10 +14188,12 @@
 	                        currentUser: usernameRefs,
 	                        editReview: false
 	                    });
-	                }).catch(function (error) {
-	                    console.log(error);
-	                });
-	            }
+	                }
+	                console.log(usernameRefs);
+	                console.log(c.state.currentUser);
+	            }).catch(function (error) {
+	                console.log(error);
+	            });
 	        };
 	
 	        _this.state = {
@@ -14191,7 +14213,7 @@
 	        key: 'componentWillMount',
 	        value: function componentWillMount() {
 	            // can't console.log any state here because component isn't mounted yet
-	            if (this.props.location.locationState.currentUser === (undefined || '' || null || "")) {
+	            if (!this.props.location.locationState.currentUser) {
 	                console.log('props.location undefined');
 	            } else {
 	                console.log(this.props.location.locationState.currentUser);
@@ -14275,7 +14297,7 @@
 	                    'Home'
 	                ),
 	                this.loading(),
-	                _react2.default.createElement(_reviewBody2.default, { paramsId: this.props.match.params.id, movie: this.state.movie, currentUser: this.state.currentUser, addReview: this.addReview, editReview: this.state.editReview, editRev: this.editR })
+	                _react2.default.createElement(_reviewBody2.default, { paramsId: this.props.match.params.id, movie: this.state.movie, currentUser: this.state.currentUser, addReview: this.addReview, editReview: this.state.editReview, deleteReview: this.state.deleteReview, onEdit: this.onEdit, newMovie: this.state.externalApiPost })
 	            );
 	        }
 	    }]);
@@ -14355,11 +14377,14 @@
 	    var paramsId = _ref.paramsId,
 	        movie = _ref.movie,
 	        currentUser = _ref.currentUser,
+	        currentReview = _ref.currentReview,
 	        editReview = _ref.editReview,
-	        _ref$editRev = _ref.editRev,
-	        editRev = _ref$editRev === undefined ? function (f) {
+	        deleteReview = _ref.deleteReview,
+	        newMovie = _ref.newMovie,
+	        _ref$onEdit = _ref.onEdit,
+	        onEdit = _ref$onEdit === undefined ? function (f) {
 	        return f;
-	    } : _ref$editRev,
+	    } : _ref$onEdit,
 	        _ref$addReview = _ref.addReview,
 	        addReview = _ref$addReview === undefined ? function (f) {
 	        return f;
@@ -14367,15 +14392,33 @@
 	
 	
 	    var reviewRefs = void 0,
-	        usernameRefs = void 0;
+	        usernameRefs = void 0,
+	        actionType = void 0;
 	
 	    var onSubmit = function onSubmit(e) {
 	        e.preventDefault();
-	        if (!usernameRefs) {
-	            addReview(currentUser, reviewRefs.value);
+	        if (movie.reviews) {
+	            // Movie available on local db
+	            if (!usernameRefs) {
+	                // user has login and will add review
+	                actionType = 'update';
+	                console.log(actionType);
+	                addReview(currentUser, reviewRefs.value, actionType);
+	            } else {
+	                // will login and add review
+	                actionType = 'update';
+	                console.log(actionType);
+	                addReview(usernameRefs.value, reviewRefs.value, actionType);
+	            }
+	        } else if (!usernameRefs) {
+	            // user has login and will add review
+	            actionType = 'addNewMovie';
+	            addReview(currentUser, reviewRefs.value, actionType);
 	        } else {
-	            console.log(usernameRefs.value);
-	            addReview(usernameRefs.value, reviewRefs.value);
+	            // will login and add review
+	            actionType = 'addNewMovie';
+	            console.log(actionType);
+	            addReview(reviewRefs.value, reviewRefs.value, actionType);
 	        }
 	    };
 	
@@ -14431,8 +14474,15 @@
 	                            ),
 	                            _react2.default.createElement(
 	                                'a',
-	                                { onClick: editRev },
+	                                { onClick: onEdit },
 	                                'EDIT'
+	                            ),
+	                            _react2.default.createElement(
+	                                'a',
+	                                { onClick: function onClick(e) {
+	                                        return addReview(currentUser, currentReview, 'delete');
+	                                    } },
+	                                'DELETE'
 	                            )
 	                        );
 	                    }
@@ -14476,13 +14526,19 @@
 	
 	    var reviewListArea = function reviewListArea() {
 	        console.log(movie.reviews);
-	        if (!movie.reviews || movie.reviews === []) {
+	        if (!movie.reviews) {
 	            return _react2.default.createElement(
 	                'p',
 	                null,
 	                'No review yet.'
 	            );
 	            console.log(movie.reviews);
+	        } else if (movie.reviews.length === 0) {
+	            return _react2.default.createElement(
+	                'p',
+	                null,
+	                'No review yet.'
+	            );
 	        } else {
 	            console.log('reduce method will executed for because review exist');
 	            console.log(movie.reviews);

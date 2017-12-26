@@ -17,12 +17,8 @@ class GetMovie extends React.Component {
           emptyReview: true,
           currentUser: '',
           currentReview: '',
-          editReview: false
+          editReview: false,
         }
-    }
-
-    editR = () => {
-        this.setState({ editReview: true })
     }
 
     logOut = () => {
@@ -30,68 +26,91 @@ class GetMovie extends React.Component {
         this.setState({ currentUser: '', currentReview: '' })
     }
 
-    addReview = (usernameRefs, reviewRefs) => { // trigger when user submit review form
-        let c = this
-        console.log(this.props.location.locationState.currentUser)
-        console.log(this.state.currentUser)
-        console.log(usernameRefs)
+    onEdit = () => {
+        this.setState({ editReview: true, currentReview: '' })
+    }
 
-        if (!this.state.externalApiPost) { // if movie data available on local database, post a new review
-            axios.post(`http://localhost:3000/api/movie/${this.props.match.params.id}/reviews`, {
-                reviews: {
+    addReview = (usernameRefs, reviewRefs, actionType) => { // trigger when user submit review form
+
+        let Url, RequestData, ResponseData, c = this
+
+        switch (actionType) {
+            case 'update':
+                Url = `http://localhost:3000/api/movie/${this.props.match.params.id}/reviews`
+                console.log(actionType)
+                RequestData = { reviews: {
                     user: usernameRefs,
                     review: reviewRefs
-                }
-            })
+                } }
+                console.log(RequestData)
+                break
+            case 'delete':
+                Url = `http://localhost:3000/api/movie/${this.props.match.params.id}/delete-user-review/${usernameRefs}`
+                console.log(actionType)
+                RequestData = { reviews: {
+                    user: usernameRefs,
+                    review: reviewRefs
+                } }
+                break
+            case 'addNewMovie':
+                Url = `http://localhost:3000/api/movie/${this.props.match.params.id}`
+                console.log(actionType)
+                RequestData = { id: c.props.match.params.id,
+                    title: c.state.movie.title,
+                    overview: c.state.movie.overview,
+                    reviews: [
+                        {
+                            user: usernameRefs,
+                            review: reviewRefs
+                        }
+                    ] }
+                break
+        }
+        
+        axios.post(Url, (RequestData))
             .then(function (response) {
-                console.log(response)
-                console.log(c.props.match.params.id)
-                c.setState({
-                    movie: {
-                        ...c.state.movie,
-                        reviews: response.data.reviews
-                    },
-                    currentUser: usernameRefs,
-                    currentReview: reviewRefs,
-                    editReview: false
-                })
+                if (actionType === 'update') {
+                    console.log(response)
+                    console.log(c.props.match.params.id)
+                    console.log(RequestData)
+                    c.setState({
+                        movie: {
+                            ...c.state.movie,
+                            reviews: response.data.reviews
+                        },
+                        currentUser: usernameRefs,
+                        currentReview: reviewRefs,
+                        editReview: false
+                    })
+                } else if (actionType === 'delete') {
+                    console.log(response.data)
+                    c.setState({
+                        movie: {
+                            ...c.state.movie,
+                            reviews: response.data.reviews
+                        },
+                        currentUser: usernameRefs,
+                        editReview: true
+                    })
+                } else {
+                    c.setState({
+                        movie: response.data,
+                        loading: false,
+                        currentReview: reviewRefs,
+                        currentUser: usernameRefs,
+                        editReview: false
+                    })
+                }
                 console.log(usernameRefs)
                 console.log(c.state.currentUser)
             })
             .catch(function (error) {
                 console.log(error)
             })
-
-        } else { // post new movie with review
-            axios.post(`http://localhost:3000/api/movie/${this.props.match.params.id}`, {
-                id: c.props.match.params.id,
-                title: c.state.movie.title,
-                overview: c.state.movie.overview,
-                reviews: [
-                    {
-                        user: usernameRefs,
-                        review: reviewRefs
-                    }
-                ]
-            })
-            .then(function (response) {
-                console.log(response)
-                c.setState({ 
-                    movie: response.data,
-                    loading: false,
-                    currentReview: reviewRefs,
-                    currentUser: usernameRefs,
-                    editReview: false
-                })
-            })
-            .catch(function (error) {
-                console.log(error)
-            })
-        }
     }
 
     componentWillMount() { // can't console.log any state here because component isn't mounted yet
-        if (this.props.location.locationState.currentUser === (undefined || '' || null || "")) {
+        if (!this.props.location.locationState.currentUser) {
             console.log('props.location undefined')
           } else {
             console.log(this.props.location.locationState.currentUser)
@@ -163,7 +182,7 @@ class GetMovie extends React.Component {
                   Home
                 </Link>
                 {this.loading()}
-                <ReviewBody paramsId={this.props.match.params.id} movie={this.state.movie} currentUser={this.state.currentUser} addReview={this.addReview} editReview={this.state.editReview} editRev={this.editR} />
+                <ReviewBody paramsId={this.props.match.params.id} movie={this.state.movie} currentUser={this.state.currentUser} addReview={this.addReview} editReview={this.state.editReview} deleteReview={this.state.deleteReview} onEdit={this.onEdit} newMovie={this.state.externalApiPost} />
             </div>
         )
     }

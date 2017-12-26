@@ -5,7 +5,8 @@ import {
     addNewMovieWithReview,
     loadSingleMovieData,
     editReview,
-    addReview
+    addReview,
+    deleteUserReview
 } from '../controllers/userController';
 
 // mongoose setuo
@@ -30,5 +31,6 @@ Routes.get('/movie', (req, res) => {
 Routes.get('/movie/:id', loadSingleMovieData)
 Routes.post('/movie/:id', addNewMovieWithReview)
 Routes.post('/movie/:id/reviews', addReview)
+Routes.post('/movie/:id/delete-user-review/:user', deleteUserReview)
 
 export default Routes;

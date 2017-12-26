@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 
 export const MovieSchema = new Schema({
     id: {
-        type: String
+        type: String,
+        unique: true
     },
     title: {
         type: String

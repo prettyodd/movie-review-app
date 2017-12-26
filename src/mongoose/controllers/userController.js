@@ -60,3 +60,17 @@ export const addReview = (req, res) => {
         }
     )
 }
+
+export const deleteUserReview = (req, res) => {
+    Movie.findOneAndUpdate(
+        {id: req.params.id},
+        {$pull: {'reviews': {user: req.params.user}}},
+        (err, movie) => {
+            if (err) {
+                res.send(err)
+            }
+            console.log(movie)
+            res.json(movie)
+        }
+    )
+}

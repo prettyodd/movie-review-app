@@ -1,17 +1,29 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-const ReviewBody = ({ paramsId, movie, currentUser, editReview, editRev=f=>f, addReview=f=>f }) => {
+const ReviewBody = ({ paramsId, movie, currentUser, currentReview, editReview, deleteReview, newMovie, onEdit=f=>f, addReview=f=>f }) => {
 
-    let reviewRefs, usernameRefs
+    let reviewRefs, usernameRefs, actionType
 
     const onSubmit = (e) => {
         e.preventDefault()
-        if (!usernameRefs) {
-            addReview(currentUser, reviewRefs.value)
-        } else {
-            console.log(usernameRefs.value)
-            addReview(usernameRefs.value, reviewRefs.value)
+        if (movie.reviews) { // Movie available on local db
+            if (!usernameRefs) { // user has login and will add review
+                actionType = 'update'
+                console.log(actionType)
+                addReview(currentUser, reviewRefs.value, actionType)
+            } else { // will login and add review
+                actionType = 'update'
+                console.log(actionType)
+                addReview(usernameRefs.value, reviewRefs.value, actionType)
+            }
+        } else if (!usernameRefs) { // user has login and will add review
+            actionType = 'addNewMovie'
+            addReview(currentUser, reviewRefs.value, actionType)
+        } else { // will login and add review
+            actionType = 'addNewMovie'
+            console.log(actionType)
+            addReview(reviewRefs.value, reviewRefs.value, actionType)
         }
     }
 
@@ -53,7 +65,8 @@ const ReviewBody = ({ paramsId, movie, currentUser, editReview, editRev=f=>f, ad
                         return (
                             <div>
                                 <span>Your Review: {ReviewObj[currentUser].review}</span>
-                                <a onClick={editRev}>EDIT</a>
+                                <a onClick={onEdit}>EDIT</a>
+                                <a onClick={(e) => addReview(currentUser, currentReview, 'delete')}>DELETE</a>
                             </div>
                         )
                     }
@@ -93,11 +106,15 @@ const ReviewBody = ({ paramsId, movie, currentUser, editReview, editRev=f=>f, ad
 
     const reviewListArea = () => { 
         console.log(movie.reviews)
-        if (!movie.reviews || movie.reviews === []) {
+        if (!movie.reviews) {
             return (
                 <p>No review yet.</p>
             )
             console.log(movie.reviews)
+        } else if (movie.reviews.length === 0) {
+            return (
+                <p>No review yet.</p>
+            )
         } else {
             console.log('reduce method will executed for because review exist')
             console.log(movie.reviews)
@@ -105,7 +122,7 @@ const ReviewBody = ({ paramsId, movie, currentUser, editReview, editRev=f=>f, ad
             const ReviewObj = movie.reviews.reduce((obj, v) => {
                 obj[v.user] = v
                 return obj
-                }, {})
+                }, {})  
 
             return (
                 <div>
