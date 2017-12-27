@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import MovieHeader from './movieHeader'
 import ReviewBody from './reviewBody'
 import Login from './login'
+import localDBCall from './api/localDBCall'
 
 class GetMovie extends React.Component {
 
@@ -28,6 +29,10 @@ class GetMovie extends React.Component {
 
     onEdit = () => {
         this.setState({ editReview: true, currentReview: '' })
+    }
+
+    APIstate = (data) => {
+        this.setState(data)
     }
 
     addReview = (usernameRefs, reviewRefs, actionType) => { // trigger when user submit review form
@@ -103,24 +108,6 @@ class GetMovie extends React.Component {
             })
     }
 
-    localDBCall = () => {
-        let c = this
-
-        axios.get(`http://localhost:3000/api/movie/${this.props.match.params.id}`) // check if movie exist in local database..
-        .then(function (response) {
-            if (response.data) {
-                c.setState({ movie: response.data, loading: false })
-                console.log('request made from local db')
-                console.log(c.state.movie.reviews)
-            } else {
-                c.setState({ externalApiCall: true }) // ..if not, allow for the GET request for external database
-            }
-        })
-        .catch(function (error) {
-            console.log(error)
-        })
-    }
-
     componentWillMount() { // can't console.log any state here because component isn't mounted yet
         if (!this.props.location.locationState.currentUser) {
             console.log('props.location undefined')
@@ -131,22 +118,7 @@ class GetMovie extends React.Component {
     }
 
     componentDidMount() {
-        this.localDBCall()
-    }
-
-    componentDidUpdate() { 
-        if (this.state.externalApiCall) {
-            let c = this
-
-            axios.get(`https://api.themoviedb.org/3/movie/${this.props.match.params.id}?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US`) // Get data from external database
-            .then(function (response) {
-                c.setState({ movie: response.data, loading: false, externalApiCall: false, externalApiPost: true })
-                console.log('request made from external db')
-            })
-            .catch(function (error) {
-                console.log(error)
-            })
-        }
+        localDBCall(this.props.match.params.id, this.APIstate)
     }
 
     loading() {
@@ -176,7 +148,7 @@ class GetMovie extends React.Component {
                   Home
                 </Link>
                 {this.loading()}
-                <ReviewBody paramsId={this.props.match.params.id} movie={this.state.movie} currentUser={this.state.currentUser} addReview={this.addReview} editReview={this.state.editReview} deleteReview={this.state.deleteReview} onEdit={this.onEdit} newMovie={this.state.externalApiPost} />
+                <ReviewBody paramsId={this.props.match.params.id} movie={this.state.movie} currentUser={this.state.currentUser} addReview={this.addReview} editReview={this.state.editReview} deleteReview={this.state.deleteReview} onEdit={this.onEdit} newMovie={this.state.externalApiPost} APIstate={this.APIstate.bind(this)} />
             </div>
         )
     }

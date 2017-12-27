@@ -14094,6 +14094,10 @@
 	
 	var _login2 = _interopRequireDefault(_login);
 	
+	var _localDBCall = __webpack_require__(/*! ./api/localDBCall */ 102);
+	
+	var _localDBCall2 = _interopRequireDefault(_localDBCall);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -14117,6 +14121,10 @@
 	
 	        _this.onEdit = function () {
 	            _this.setState({ editReview: true, currentReview: '' });
+	        };
+	
+	        _this.APIstate = function (data) {
+	            _this.setState(data);
 	        };
 	
 	        _this.addReview = function (usernameRefs, reviewRefs, actionType) {
@@ -14191,23 +14199,6 @@
 	            });
 	        };
 	
-	        _this.localDBCall = function () {
-	            var c = _this;
-	
-	            _axios2.default.get('http://localhost:3000/api/movie/' + _this.props.match.params.id) // check if movie exist in local database..
-	            .then(function (response) {
-	                if (response.data) {
-	                    c.setState({ movie: response.data, loading: false });
-	                    console.log('request made from local db');
-	                    console.log(c.state.movie.reviews);
-	                } else {
-	                    c.setState({ externalApiCall: true }); // ..if not, allow for the GET request for external database
-	                }
-	            }).catch(function (error) {
-	                console.log(error);
-	            });
-	        };
-	
 	        _this.state = {
 	            loading: true,
 	            movie: { id: '', title: '', overview: '', reviews: [] },
@@ -14235,22 +14226,7 @@
 	    }, {
 	        key: 'componentDidMount',
 	        value: function componentDidMount() {
-	            this.localDBCall();
-	        }
-	    }, {
-	        key: 'componentDidUpdate',
-	        value: function componentDidUpdate() {
-	            if (this.state.externalApiCall) {
-	                var c = this;
-	
-	                _axios2.default.get('https://api.themoviedb.org/3/movie/' + this.props.match.params.id + '?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US') // Get data from external database
-	                .then(function (response) {
-	                    c.setState({ movie: response.data, loading: false, externalApiCall: false, externalApiPost: true });
-	                    console.log('request made from external db');
-	                }).catch(function (error) {
-	                    console.log(error);
-	                });
-	            }
+	            (0, _localDBCall2.default)(this.props.match.params.id, this.APIstate);
 	        }
 	    }, {
 	        key: 'loading',
@@ -14288,7 +14264,7 @@
 	                    'Home'
 	                ),
 	                this.loading(),
-	                _react2.default.createElement(_reviewBody2.default, { paramsId: this.props.match.params.id, movie: this.state.movie, currentUser: this.state.currentUser, addReview: this.addReview, editReview: this.state.editReview, deleteReview: this.state.deleteReview, onEdit: this.onEdit, newMovie: this.state.externalApiPost })
+	                _react2.default.createElement(_reviewBody2.default, { paramsId: this.props.match.params.id, movie: this.state.movie, currentUser: this.state.currentUser, addReview: this.addReview, editReview: this.state.editReview, deleteReview: this.state.deleteReview, onEdit: this.onEdit, newMovie: this.state.externalApiPost, APIstate: this.APIstate.bind(this) })
 	            );
 	        }
 	    }]);
@@ -14362,11 +14338,19 @@
 	
 	var _reactRouterDom = __webpack_require__(/*! react-router-dom */ 56);
 	
+	var _addNewMovie = __webpack_require__(/*! ./api/addNewMovie */ 104);
+	
+	var _addNewMovie2 = _interopRequireDefault(_addNewMovie);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var ReviewBody = function ReviewBody(_ref) {
 	    var paramsId = _ref.paramsId,
 	        movie = _ref.movie,
+	        _ref$APIstate = _ref.APIstate,
+	        APIstate = _ref$APIstate === undefined ? function (f) {
+	        return f;
+	    } : _ref$APIstate,
 	        currentUser = _ref.currentUser,
 	        currentReview = _ref.currentReview,
 	        editReview = _ref.editReview,
@@ -14486,9 +14470,17 @@
 	                return reviewForm();
 	            }
 	        } else {
+	
+	            var OnSubmit = function OnSubmit(e) {
+	                e.preventDefault();
+	                (0, _addNewMovie2.default)(paramsId, movie, usernameRefs.value, reviewRefs.value, APIstate = function APIstate(f) {
+	                    return f;
+	                });
+	            };
+	
 	            return _react2.default.createElement(
 	                'form',
-	                { onSubmit: onSubmit },
+	                { onSubmit: OnSubmit },
 	                _react2.default.createElement('input', {
 	                    type: 'text',
 	                    placeholder: 'Username',
@@ -14620,6 +14612,154 @@
 	};
 	
 	exports.default = Login;
+
+/***/ }),
+/* 101 */,
+/* 102 */
+/*!************************************************!*\
+  !*** ./src/components/home/api/localDBCall.js ***!
+  \************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _axios = __webpack_require__(/*! axios */ 29);
+	
+	var _axios2 = _interopRequireDefault(_axios);
+	
+	var _extDBCall = __webpack_require__(/*! ./extDBCall */ 103);
+	
+	var _extDBCall2 = _interopRequireDefault(_extDBCall);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var localDBCall = function localDBCall(paramsId) {
+	    var APIstate = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function (f) {
+	        return f;
+	    };
+	
+	    var c = undefined;
+	    return _axios2.default.get('http://localhost:3000/api/movie/' + paramsId) // check if movie exist in local database..
+	    .then(function (response) {
+	        if (response.data) {
+	            APIstate({ movie: response.data, loading: false });
+	            console.log('request made from local db');
+	        } else {
+	            (0, _extDBCall2.default)(paramsId, APIstate);
+	        }
+	    }).catch(function (error) {
+	        console.log(error);
+	    });
+	};
+	
+	exports.default = localDBCall;
+
+/***/ }),
+/* 103 */
+/*!**********************************************!*\
+  !*** ./src/components/home/api/extDBCall.js ***!
+  \**********************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _axios = __webpack_require__(/*! axios */ 29);
+	
+	var _axios2 = _interopRequireDefault(_axios);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var ExtAPIcall = function ExtAPIcall(paramsId) {
+	    var APIstate = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function (f) {
+	        return f;
+	    };
+	
+	
+	    var c = undefined;
+	
+	    return _axios2.default.get('https://api.themoviedb.org/3/movie/' + paramsId + '?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US') // Get data from external database
+	    .then(function (response) {
+	        APIstate({ movie: response.data, loading: false, externalApiCall: false, externalApiPost: true });
+	        console.log('request made from external db');
+	    }).catch(function (error) {
+	        console.log(error);
+	    });
+	};
+	
+	exports.default = ExtAPIcall;
+
+/***/ }),
+/* 104 */
+/*!************************************************!*\
+  !*** ./src/components/home/api/addNewMovie.js ***!
+  \************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _axios = __webpack_require__(/*! axios */ 29);
+	
+	var _axios2 = _interopRequireDefault(_axios);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var AddNewMovie = function AddNewMovie(paramsId, movie, username, userReview) {
+	    var APIstate = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : function (f) {
+	        return f;
+	    };
+	
+	    var c = undefined;
+	
+	    return _axios2.default.post('http://localhost:3000/api/movie/' + paramsId, {
+	        id: paramsId,
+	        title: movie.title,
+	        overview: movie.overview,
+	        reviews: [{
+	            user: username,
+	            review: userReview
+	        }]
+	    }).then(function (response) {
+	        console.log('add new movie');
+	        console.log(response);
+	        console.log(paramsId);
+	        APIstate({
+	            movie: response.data,
+	            loading: false,
+	            currentReview: userReview,
+	            currentUser: username,
+	            editReview: false
+	        });
+	        console.log(username);
+	    }).catch(function (error) {
+	        console.log(error);
+	    });
+	};
+	
+	exports.default = AddNewMovie;
 
 /***/ })
 /******/ ]);

@@ -1,7 +1,8 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import AddNewMovie from './api/addNewMovie'
 
-const ReviewBody = ({ paramsId, movie, currentUser, currentReview, editReview, deleteReview, newMovie, onEdit=f=>f, addReview=f=>f }) => {
+const ReviewBody = ({ paramsId, movie, APIstate=f=>f, currentUser, currentReview, editReview, deleteReview, newMovie, onEdit=f=>f, addReview=f=>f }) => {
 
     let reviewRefs, usernameRefs, actionType
 
@@ -83,8 +84,14 @@ const ReviewBody = ({ paramsId, movie, currentUser, currentReview, editReview, d
                 )
             }
         } else {
+
+            const OnSubmit = (e) => {
+                e.preventDefault()
+                AddNewMovie(paramsId, movie, usernameRefs.value, reviewRefs.value, APIstate=f=>f)
+            }
+
             return (
-                <form onSubmit={onSubmit}>
+                <form onSubmit={OnSubmit}>
                 <input 
                   type="text" 
                   placeholder="Username" 
