@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import ExtDBcall from './extDBCall'
 
-const localDBCall = (paramsId, APIstate=f=>f) => {
+const LocalDBCall = (paramsId, APIstate=f=>f) => {
     let c = this
     return (
         axios.get(`http://localhost:3000/api/movie/${paramsId}`) // check if movie exist in local database..
@@ -20,4 +20,4 @@ const localDBCall = (paramsId, APIstate=f=>f) => {
     )
 }
 
-export default localDBCall
+export default LocalDBCall

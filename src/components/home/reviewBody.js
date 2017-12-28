@@ -1,36 +1,52 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import AddNewMovie from './api/addNewMovie'
+import UpdateReview from './api/updateReview'
+import DeleteReview from './api/deleteReview'
 
-const ReviewBody = ({ paramsId, movie, APIstate=f=>f, currentUser, currentReview, editReview, deleteReview, newMovie, onEdit=f=>f, addReview=f=>f }) => {
+const ReviewBody = ({ paramsId, movie, APIstate=f=>f, currentUser, currentReview, editReview, deleteReview, newMovie, onEdit=f=>f }) => {
 
     let reviewRefs, usernameRefs, actionType
 
-    const onSubmit = (e) => {
+    const OnSubmit = (e) => { // don't use 'onSubmit' as a variable/function name, its a reserved event keyword
         e.preventDefault()
         if (movie.reviews) { // Movie available on local db
             if (!usernameRefs) { // user has login and will add review
-                actionType = 'update'
-                console.log(actionType)
-                addReview(currentUser, reviewRefs.value, actionType)
+                UpdateReview(paramsId, movie, currentUser, reviewRefs.value, APIstate)
             } else { // will login and add review
-                actionType = 'update'
-                console.log(actionType)
-                addReview(usernameRefs.value, reviewRefs.value, actionType)
+                UpdateReview(paramsId, movie, usernameRefs.value, reviewRefs.value, APIstate)
             }
         } else if (!usernameRefs) { // user has login and will add review
-            actionType = 'addNewMovie'
-            addReview(currentUser, reviewRefs.value, actionType)
+            AddNewMovie(paramsId, movie, currentUser, reviewRefs.value, APIstate)
         } else { // will login and add review
-            actionType = 'addNewMovie'
-            console.log(actionType)
-            addReview(reviewRefs.value, reviewRefs.value, actionType)
+            AddNewMovie(paramsId, movie, usernameRefs.value, reviewRefs.value, APIstate)
         }
+    }
+
+    const fullForm = () => {
+        return (
+            <form onSubmit={OnSubmit}>
+                <input 
+                  type="text" 
+                  placeholder="Username" 
+                  ref={el => usernameRefs = el} />
+                <textarea 
+                   type="text"
+                   placeholder="Write your review..."
+                   ref={el => reviewRefs = el} 
+                   className="form-control" />
+                <span className="input-group-btn">
+                  <button type="submit" className="btn btn-info">
+                     Sumbit
+                  </button>
+                </span>
+            </form>
+        )
     }
 
     const reviewForm = () => {
         return (
-            <form onSubmit={onSubmit}>
+            <form onSubmit={OnSubmit}>
             <textarea 
                type="text"
                placeholder="Write your review..."
@@ -67,7 +83,7 @@ const ReviewBody = ({ paramsId, movie, APIstate=f=>f, currentUser, currentReview
                             <div>
                                 <span>Your Review: {ReviewObj[currentUser].review}</span>
                                 <a onClick={onEdit}>EDIT</a>
-                                <a onClick={(e) => addReview(currentUser, currentReview, 'delete')}>DELETE</a>
+                                <a onClick={(e) => DeleteReview(paramsId, movie, currentUser, currentReview, APIstate)}>DELETE</a>
                             </div>
                         )
                     }
@@ -84,29 +100,8 @@ const ReviewBody = ({ paramsId, movie, APIstate=f=>f, currentUser, currentReview
                 )
             }
         } else {
-
-            const OnSubmit = (e) => {
-                e.preventDefault()
-                AddNewMovie(paramsId, movie, usernameRefs.value, reviewRefs.value, APIstate=f=>f)
-            }
-
             return (
-                <form onSubmit={OnSubmit}>
-                <input 
-                  type="text" 
-                  placeholder="Username" 
-                  ref={el => usernameRefs = el} />
-                <textarea 
-                   type="text"
-                   placeholder="Write your review..."
-                   ref={el => reviewRefs = el} 
-                   className="form-control" />
-                <span className="input-group-btn">
-                  <button type="submit" className="btn btn-info">
-                     Sumbit
-                  </button>
-                </span>
-                </form>
+                fullForm()
             )
         }
     } 

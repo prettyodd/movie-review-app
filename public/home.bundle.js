@@ -14068,8 +14068,6 @@
 	    value: true
 	});
 	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	var _react = __webpack_require__(/*! react */ 1);
@@ -14124,79 +14122,8 @@
 	        };
 	
 	        _this.APIstate = function (data) {
+	            console.log(data);
 	            _this.setState(data);
-	        };
-	
-	        _this.addReview = function (usernameRefs, reviewRefs, actionType) {
-	            // trigger when user submit review form
-	
-	            var Url = void 0,
-	                RequestData = void 0,
-	                ResponseData = void 0,
-	                c = _this;
-	
-	            switch (actionType) {
-	                case 'update':
-	                    Url = 'http://localhost:3000/api/movie/' + _this.props.match.params.id + '/reviews';
-	                    console.log(actionType);
-	                    RequestData = { reviews: {
-	                            user: usernameRefs,
-	                            review: reviewRefs
-	                        } };
-	                    console.log(RequestData);
-	                    break;
-	                case 'delete':
-	                    Url = 'http://localhost:3000/api/movie/' + _this.props.match.params.id + '/delete-user-review/' + usernameRefs;
-	                    console.log(actionType);
-	                    RequestData = { reviews: {
-	                            user: usernameRefs,
-	                            review: reviewRefs
-	                        } };
-	                    break;
-	                case 'addNewMovie':
-	                    Url = 'http://localhost:3000/api/movie/' + _this.props.match.params.id;
-	                    console.log(actionType);
-	                    RequestData = { id: c.props.match.params.id,
-	                        title: c.state.movie.title,
-	                        overview: c.state.movie.overview,
-	                        reviews: [{
-	                            user: usernameRefs,
-	                            review: reviewRefs
-	                        }] };
-	                    break;
-	            }
-	
-	            _axios2.default.post(Url, RequestData).then(function (response) {
-	                if (actionType === 'update') {
-	                    console.log(response);
-	                    console.log(c.props.match.params.id);
-	                    console.log(RequestData);
-	                    c.setState({
-	                        movie: _extends({}, c.state.movie, {
-	                            reviews: response.data.reviews
-	                        }),
-	                        currentUser: usernameRefs,
-	                        currentReview: reviewRefs,
-	                        editReview: false
-	                    });
-	                } else if (actionType === 'delete') {
-	                    console.log(response.data);
-	                    c.setState({ editReview: true });
-	                    c.localDBCall();
-	                } else {
-	                    c.setState({
-	                        movie: response.data,
-	                        loading: false,
-	                        currentReview: reviewRefs,
-	                        currentUser: usernameRefs,
-	                        editReview: false
-	                    });
-	                }
-	                console.log(usernameRefs);
-	                console.log(c.state.currentUser);
-	            }).catch(function (error) {
-	                console.log(error);
-	            });
 	        };
 	
 	        _this.state = {
@@ -14216,12 +14143,8 @@
 	        key: 'componentWillMount',
 	        value: function componentWillMount() {
 	            // can't console.log any state here because component isn't mounted yet
-	            if (!this.props.location.locationState.currentUser) {
-	                console.log('props.location undefined');
-	            } else {
-	                console.log(this.props.location.locationState.currentUser);
-	                this.setState({ currentUser: this.props.location.locationState.currentUser });
-	            }
+	            !this.props.location.locationState.currentUser ? console.log('props.location undefined') : console.log(this.props.location.locationState.currentUser);
+	            this.setState({ currentUser: this.props.location.locationState.currentUser });
 	        }
 	    }, {
 	        key: 'componentDidMount',
@@ -14231,22 +14154,16 @@
 	    }, {
 	        key: 'loading',
 	        value: function loading() {
-	            if (this.state.loading) {
-	                return _react2.default.createElement(
-	                    'h2',
-	                    null,
-	                    'Loading...'
-	                );
-	            } else {
-	                return _react2.default.createElement(_movieHeader2.default, { movie: this.state.movie });
-	            }
+	            return this.state.loading ? _react2.default.createElement(
+	                'h2',
+	                null,
+	                'Loading...'
+	            ) : _react2.default.createElement(_movieHeader2.default, { movie: this.state.movie });
 	        }
 	    }, {
 	        key: 'isLogin',
 	        value: function isLogin() {
-	            if (this.state.currentUser) {
-	                return _react2.default.createElement(_login2.default, { currentUser: this.state.currentUser, logOut: this.logOut });
-	            }
+	            return this.state.currentUser ? _react2.default.createElement(_login2.default, { currentUser: this.state.currentUser, logOut: this.logOut }) : null;
 	        }
 	    }, {
 	        key: 'render',
@@ -14264,7 +14181,16 @@
 	                    'Home'
 	                ),
 	                this.loading(),
-	                _react2.default.createElement(_reviewBody2.default, { paramsId: this.props.match.params.id, movie: this.state.movie, currentUser: this.state.currentUser, addReview: this.addReview, editReview: this.state.editReview, deleteReview: this.state.deleteReview, onEdit: this.onEdit, newMovie: this.state.externalApiPost, APIstate: this.APIstate.bind(this) })
+	                _react2.default.createElement(_reviewBody2.default, {
+	                    paramsId: this.props.match.params.id,
+	                    movie: this.state.movie,
+	                    currentUser: this.state.currentUser,
+	                    editReview: this.state.editReview,
+	                    deleteReview: this.state.deleteReview,
+	                    onEdit: this.onEdit,
+	                    newMovie: this.state.externalApiPost,
+	                    APIstate: this.APIstate
+	                })
 	            );
 	        }
 	    }]);
@@ -14342,6 +14268,14 @@
 	
 	var _addNewMovie2 = _interopRequireDefault(_addNewMovie);
 	
+	var _updateReview = __webpack_require__(/*! ./api/updateReview */ 105);
+	
+	var _updateReview2 = _interopRequireDefault(_updateReview);
+	
+	var _deleteReview = __webpack_require__(/*! ./api/deleteReview */ 106);
+	
+	var _deleteReview2 = _interopRequireDefault(_deleteReview);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var ReviewBody = function ReviewBody(_ref) {
@@ -14359,48 +14293,67 @@
 	        _ref$onEdit = _ref.onEdit,
 	        onEdit = _ref$onEdit === undefined ? function (f) {
 	        return f;
-	    } : _ref$onEdit,
-	        _ref$addReview = _ref.addReview,
-	        addReview = _ref$addReview === undefined ? function (f) {
-	        return f;
-	    } : _ref$addReview;
+	    } : _ref$onEdit;
 	
 	
 	    var reviewRefs = void 0,
 	        usernameRefs = void 0,
 	        actionType = void 0;
 	
-	    var onSubmit = function onSubmit(e) {
+	    var OnSubmit = function OnSubmit(e) {
+	        // don't use 'onSubmit' as a variable/function name, its a reserved event keyword
 	        e.preventDefault();
 	        if (movie.reviews) {
 	            // Movie available on local db
 	            if (!usernameRefs) {
 	                // user has login and will add review
-	                actionType = 'update';
-	                console.log(actionType);
-	                addReview(currentUser, reviewRefs.value, actionType);
+	                (0, _updateReview2.default)(paramsId, movie, currentUser, reviewRefs.value, APIstate);
 	            } else {
 	                // will login and add review
-	                actionType = 'update';
-	                console.log(actionType);
-	                addReview(usernameRefs.value, reviewRefs.value, actionType);
+	                (0, _updateReview2.default)(paramsId, movie, usernameRefs.value, reviewRefs.value, APIstate);
 	            }
 	        } else if (!usernameRefs) {
 	            // user has login and will add review
-	            actionType = 'addNewMovie';
-	            addReview(currentUser, reviewRefs.value, actionType);
+	            (0, _addNewMovie2.default)(paramsId, movie, currentUser, reviewRefs.value, APIstate);
 	        } else {
 	            // will login and add review
-	            actionType = 'addNewMovie';
-	            console.log(actionType);
-	            addReview(reviewRefs.value, reviewRefs.value, actionType);
+	            (0, _addNewMovie2.default)(paramsId, movie, usernameRefs.value, reviewRefs.value, APIstate);
 	        }
+	    };
+	
+	    var fullForm = function fullForm() {
+	        return _react2.default.createElement(
+	            'form',
+	            { onSubmit: OnSubmit },
+	            _react2.default.createElement('input', {
+	                type: 'text',
+	                placeholder: 'Username',
+	                ref: function ref(el) {
+	                    return usernameRefs = el;
+	                } }),
+	            _react2.default.createElement('textarea', {
+	                type: 'text',
+	                placeholder: 'Write your review...',
+	                ref: function ref(el) {
+	                    return reviewRefs = el;
+	                },
+	                className: 'form-control' }),
+	            _react2.default.createElement(
+	                'span',
+	                { className: 'input-group-btn' },
+	                _react2.default.createElement(
+	                    'button',
+	                    { type: 'submit', className: 'btn btn-info' },
+	                    'Sumbit'
+	                )
+	            )
+	        );
 	    };
 	
 	    var reviewForm = function reviewForm() {
 	        return _react2.default.createElement(
 	            'form',
-	            { onSubmit: onSubmit },
+	            { onSubmit: OnSubmit },
 	            _react2.default.createElement('textarea', {
 	                type: 'text',
 	                placeholder: 'Write your review...',
@@ -14455,7 +14408,7 @@
 	                            _react2.default.createElement(
 	                                'a',
 	                                { onClick: function onClick(e) {
-	                                        return addReview(currentUser, currentReview, 'delete');
+	                                        return (0, _deleteReview2.default)(paramsId, movie, currentUser, currentReview, APIstate);
 	                                    } },
 	                                'DELETE'
 	                            )
@@ -14470,40 +14423,7 @@
 	                return reviewForm();
 	            }
 	        } else {
-	
-	            var OnSubmit = function OnSubmit(e) {
-	                e.preventDefault();
-	                (0, _addNewMovie2.default)(paramsId, movie, usernameRefs.value, reviewRefs.value, APIstate = function APIstate(f) {
-	                    return f;
-	                });
-	            };
-	
-	            return _react2.default.createElement(
-	                'form',
-	                { onSubmit: OnSubmit },
-	                _react2.default.createElement('input', {
-	                    type: 'text',
-	                    placeholder: 'Username',
-	                    ref: function ref(el) {
-	                        return usernameRefs = el;
-	                    } }),
-	                _react2.default.createElement('textarea', {
-	                    type: 'text',
-	                    placeholder: 'Write your review...',
-	                    ref: function ref(el) {
-	                        return reviewRefs = el;
-	                    },
-	                    className: 'form-control' }),
-	                _react2.default.createElement(
-	                    'span',
-	                    { className: 'input-group-btn' },
-	                    _react2.default.createElement(
-	                        'button',
-	                        { type: 'submit', className: 'btn btn-info' },
-	                        'Sumbit'
-	                    )
-	                )
-	            );
+	            return fullForm();
 	        }
 	    };
 	
@@ -14641,7 +14561,7 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var localDBCall = function localDBCall(paramsId) {
+	var LocalDBCall = function LocalDBCall(paramsId) {
 	    var APIstate = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function (f) {
 	        return f;
 	    };
@@ -14660,7 +14580,7 @@
 	    });
 	};
 	
-	exports.default = localDBCall;
+	exports.default = LocalDBCall;
 
 /***/ }),
 /* 103 */
@@ -14693,9 +14613,8 @@
 	
 	    var c = undefined;
 	
-	    return _axios2.default.get('https://api.themoviedb.org/3/movie/' + paramsId + '?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US') // Get data from external database
-	    .then(function (response) {
-	        APIstate({ movie: response.data, loading: false, externalApiCall: false, externalApiPost: true });
+	    return _axios2.default.get('https://api.themoviedb.org/3/movie/' + paramsId + '?api_key=8628080f9f188525f46d4b3f501f92ef&language=en-US').then(function (response) {
+	        APIstate({ movie: response.data, loading: false });
 	        console.log('request made from external db');
 	    }).catch(function (error) {
 	        console.log(error);
@@ -14760,6 +14679,118 @@
 	};
 	
 	exports.default = AddNewMovie;
+
+/***/ }),
+/* 105 */
+/*!*************************************************!*\
+  !*** ./src/components/home/api/updateReview.js ***!
+  \*************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _axios = __webpack_require__(/*! axios */ 29);
+	
+	var _axios2 = _interopRequireDefault(_axios);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var UpdateReview = function UpdateReview(paramsId, movie, username, userReview) {
+	    var APIstate = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : function (f) {
+	        return f;
+	    };
+	
+	    var c = undefined;
+	
+	    return _axios2.default.post('http://localhost:3000/api/movie/' + paramsId + '/reviews', {
+	        reviews: {
+	            user: username,
+	            review: userReview
+	        }
+	    }).then(function (response) {
+	        console.log('add new movie');
+	        console.log(response);
+	        console.log(paramsId);
+	        console.log(movie);
+	        APIstate({
+	            movie: _extends({}, movie, {
+	                reviews: response.data.reviews
+	            }),
+	            currentUser: username,
+	            currentReview: userReview,
+	            editReview: false
+	        });
+	        console.log(movie);
+	        console.log(username);
+	    }).catch(function (error) {
+	        console.log(error);
+	    });
+	};
+	
+	exports.default = UpdateReview;
+
+/***/ }),
+/* 106 */
+/*!*************************************************!*\
+  !*** ./src/components/home/api/deleteReview.js ***!
+  \*************************************************/
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _axios = __webpack_require__(/*! axios */ 29);
+	
+	var _axios2 = _interopRequireDefault(_axios);
+	
+	var _localDBCall = __webpack_require__(/*! ./localDBCall */ 102);
+	
+	var _localDBCall2 = _interopRequireDefault(_localDBCall);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var DeleteReview = function DeleteReview(paramsId, movie, username, userReview) {
+	    var APIstate = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : function (f) {
+	        return f;
+	    };
+	
+	    var c = undefined;
+	
+	    return _axios2.default.post('http://localhost:3000/api/movie/' + paramsId + '/delete-user-review/' + username, {
+	        reviews: {
+	            user: username,
+	            review: userReview
+	        }
+	    }).then(function (response) {
+	        console.log('add new movie');
+	        console.log(response);
+	        console.log(paramsId);
+	        APIstate({ editReview: true });
+	        (0, _localDBCall2.default)(paramsId, APIstate);
+	        console.log(username);
+	    }).catch(function (error) {
+	        console.log(error);
+	    });
+	};
+	
+	exports.default = DeleteReview;
 
 /***/ })
 /******/ ]);
