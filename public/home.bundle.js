@@ -14373,6 +14373,39 @@
 	        );
 	    };
 	
+	    var userAsObjKey = function userAsObjKey(e) {
+	        // assign user as object key for review array
+	        return e.reviews.reduce(function (obj, v) {
+	            obj[v.user] = v;
+	            return obj;
+	        }, {});
+	    };
+	
+	    var reviewBody = function reviewBody(arr) {
+	        return _react2.default.createElement(
+	            'div',
+	            null,
+	            _react2.default.createElement(
+	                'span',
+	                null,
+	                'Your Review: ',
+	                arr[currentUser].review
+	            ),
+	            _react2.default.createElement(
+	                'a',
+	                { onClick: onEdit },
+	                'EDIT'
+	            ),
+	            _react2.default.createElement(
+	                'a',
+	                { onClick: function onClick(e) {
+	                        return (0, _deleteReview2.default)(paramsId, movie, currentUser, currentReview, APIstate);
+	                    } },
+	                'DELETE'
+	            )
+	        );
+	    };
+	
 	    var userReviewAndFormArea = function userReviewAndFormArea() {
 	        // logic for user review info & full form
 	        if (currentUser) {
@@ -14381,38 +14414,14 @@
 	
 	            if (movie.reviews) {
 	
-	                var ReviewObj = movie.reviews.reduce(function (obj, v) {
-	                    obj[v.user] = v;
-	                    return obj;
-	                }, {});
+	                var ReviewObj = userAsObjKey(movie);
 	
 	                if (ReviewObj[currentUser]) {
 	                    if (editReview) {
 	                        console.log(editReview);
 	                        return reviewForm();
 	                    } else {
-	                        return _react2.default.createElement(
-	                            'div',
-	                            null,
-	                            _react2.default.createElement(
-	                                'span',
-	                                null,
-	                                'Your Review: ',
-	                                ReviewObj[currentUser].review
-	                            ),
-	                            _react2.default.createElement(
-	                                'a',
-	                                { onClick: onEdit },
-	                                'EDIT'
-	                            ),
-	                            _react2.default.createElement(
-	                                'a',
-	                                { onClick: function onClick(e) {
-	                                        return (0, _deleteReview2.default)(paramsId, movie, currentUser, currentReview, APIstate);
-	                                    } },
-	                                'DELETE'
-	                            )
-	                        );
+	                        return reviewBody(ReviewObj);
 	                    }
 	                } else {
 	                    console.log('2');

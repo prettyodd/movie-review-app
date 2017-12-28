@@ -61,16 +61,32 @@ const ReviewBody = ({ paramsId, movie, APIstate=f=>f, currentUser, currentReview
         )
     }
 
+    const userAsObjKey = (e) => { // assign user as object key for review array
+        return (
+            e.reviews.reduce((obj, v) => {
+                obj[v.user] = v
+                return obj
+                }, {})
+        )
+    }
+
+    const reviewBody = (arr) => {
+        return (
+            <div>
+                <span>Your Review: {arr[currentUser].review}</span>
+                <a onClick={onEdit}>EDIT</a>
+                <a onClick={(e) => DeleteReview(paramsId, movie, currentUser, currentReview, APIstate)}>DELETE</a>
+            </div>
+        )
+    }
+
     const userReviewAndFormArea = () => { // logic for user review info & full form
         if (currentUser) { // If current user exist and movie.review exist
             console.log(movie.reviews)
 
             if (movie.reviews) {
 
-                const ReviewObj = movie.reviews.reduce((obj, v) => {
-                                    obj[v.user] = v
-                                    return obj
-                                    }, {})
+                let ReviewObj = userAsObjKey(movie)
 
                 if (ReviewObj[currentUser]) {
                     if (editReview) {
@@ -80,11 +96,7 @@ const ReviewBody = ({ paramsId, movie, APIstate=f=>f, currentUser, currentReview
                         )
                     } else {
                         return (
-                            <div>
-                                <span>Your Review: {ReviewObj[currentUser].review}</span>
-                                <a onClick={onEdit}>EDIT</a>
-                                <a onClick={(e) => DeleteReview(paramsId, movie, currentUser, currentReview, APIstate)}>DELETE</a>
-                            </div>
+                            reviewBody(ReviewObj)
                         )
                     }
                 } else {
