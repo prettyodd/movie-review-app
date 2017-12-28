@@ -2,9 +2,7 @@ import mongoose from 'mongoose';
 import { UserSchema } from '../models/userSchema';
 import { MovieSchema, ReviewSchema } from '../models/movieSchema';
 
-const User = mongoose.model('User', UserSchema);
 const Movie = mongoose.model('Movie', MovieSchema);
-const Review = mongoose.model('Review', ReviewSchema)
 
 export const addNewUser = (req, res) => {
     let newUser = new User(req.body);

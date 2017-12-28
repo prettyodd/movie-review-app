@@ -14129,9 +14129,6 @@
 	        _this.state = {
 	            loading: true,
 	            movie: { id: '', title: '', overview: '', reviews: [] },
-	            externalApiCall: false,
-	            externalApiPost: false,
-	            emptyReview: true,
 	            currentUser: '',
 	            currentReview: '',
 	            editReview: false
@@ -14186,9 +14183,7 @@
 	                    movie: this.state.movie,
 	                    currentUser: this.state.currentUser,
 	                    editReview: this.state.editReview,
-	                    deleteReview: this.state.deleteReview,
 	                    onEdit: this.onEdit,
-	                    newMovie: this.state.externalApiPost,
 	                    APIstate: this.APIstate
 	                })
 	            );
@@ -14288,8 +14283,6 @@
 	        currentUser = _ref.currentUser,
 	        currentReview = _ref.currentReview,
 	        editReview = _ref.editReview,
-	        deleteReview = _ref.deleteReview,
-	        newMovie = _ref.newMovie,
 	        _ref$onEdit = _ref.onEdit,
 	        onEdit = _ref$onEdit === undefined ? function (f) {
 	        return f;
@@ -14406,29 +14399,49 @@
 	        );
 	    };
 	
+	    var reviewList = function reviewList(arr) {
+	        return _react2.default.createElement(
+	            'div',
+	            null,
+	            _react2.default.createElement(
+	                'h3',
+	                null,
+	                'Review list:'
+	            ),
+	            Object.keys(arr).map(function (key, i) {
+	                return _react2.default.createElement(
+	                    'div',
+	                    { key: i, className: 'Movies' },
+	                    _react2.default.createElement(
+	                        'span',
+	                        null,
+	                        'Review: ',
+	                        arr[key].review,
+	                        ' by ',
+	                        arr[key].user
+	                    )
+	                );
+	            })
+	        );
+	    };
+	
 	    var userReviewAndFormArea = function userReviewAndFormArea() {
 	        // logic for user review info & full form
+	
 	        if (currentUser) {
 	            // If current user exist and movie.review exist
-	            console.log(movie.reviews);
-	
 	            if (movie.reviews) {
-	
 	                var ReviewObj = userAsObjKey(movie);
-	
 	                if (ReviewObj[currentUser]) {
 	                    if (editReview) {
-	                        console.log(editReview);
 	                        return reviewForm();
 	                    } else {
 	                        return reviewBody(ReviewObj);
 	                    }
 	                } else {
-	                    console.log('2');
 	                    return reviewForm();
 	                }
 	            } else {
-	                console.log('3');
 	                return reviewForm();
 	            }
 	        } else {
@@ -14437,14 +14450,12 @@
 	    };
 	
 	    var reviewListArea = function reviewListArea() {
-	        console.log(movie.reviews);
 	        if (!movie.reviews) {
 	            return _react2.default.createElement(
 	                'p',
 	                null,
 	                'No review yet.'
 	            );
-	            console.log(movie.reviews);
 	        } else if (movie.reviews.length === 0) {
 	            return _react2.default.createElement(
 	                'p',
@@ -14452,37 +14463,8 @@
 	                'No review yet.'
 	            );
 	        } else {
-	            console.log('reduce method will executed for because review exist');
-	            console.log(movie.reviews);
-	
-	            var ReviewObj = movie.reviews.reduce(function (obj, v) {
-	                obj[v.user] = v;
-	                return obj;
-	            }, {});
-	
-	            return _react2.default.createElement(
-	                'div',
-	                null,
-	                _react2.default.createElement(
-	                    'h3',
-	                    null,
-	                    'Review list:'
-	                ),
-	                Object.keys(ReviewObj).map(function (key, i) {
-	                    return _react2.default.createElement(
-	                        'div',
-	                        { key: i, className: 'Movies' },
-	                        _react2.default.createElement(
-	                            'span',
-	                            null,
-	                            'Review: ',
-	                            ReviewObj[key].review,
-	                            ' by ',
-	                            ReviewObj[key].user
-	                        )
-	                    );
-	                })
-	            );
+	            var ReviewObj = userAsObjKey(movie);
+	            return reviewList(ReviewObj);
 	        }
 	    };
 	

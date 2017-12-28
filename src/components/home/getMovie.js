@@ -13,9 +13,6 @@ class GetMovie extends React.Component {
         this.state = {
           loading: true,
           movie: { id: '', title: '', overview: '', reviews: [] },
-          externalApiCall: false,
-          externalApiPost: false,
-          emptyReview: true,
           currentUser: '',
           currentReview: '',
           editReview: false,
@@ -76,9 +73,7 @@ class GetMovie extends React.Component {
                     movie={this.state.movie}
                     currentUser={this.state.currentUser}
                     editReview={this.state.editReview}
-                    deleteReview={this.state.deleteReview}
                     onEdit={this.onEdit}
-                    newMovie={this.state.externalApiPost}
                     APIstate={this.APIstate}
                 />
             </div>
