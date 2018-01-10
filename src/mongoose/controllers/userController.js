@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import { UserSchema } from '../models/userSchema';
 import { MovieSchema, ReviewSchema } from '../models/movieSchema';
 
 const Movie = mongoose.model('Movie', MovieSchema);
