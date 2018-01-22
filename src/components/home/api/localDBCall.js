@@ -5,7 +5,7 @@ import ExtDBcall from './extDBCall'
 const LocalDBCall = (paramsId, APIstate=f=>f) => {
     let c = this
     return (
-        axios.get(`http://localhost:3000/api/movie/${paramsId}`) // check if movie exist in local database..
+        axios.get(`/api/movie/${paramsId}`) // check if movie exist in local database..
         .then(function (response) {
             if (response.data) {
                 APIstate({ movie: response.data, loading: false })
@@ -16,6 +16,7 @@ const LocalDBCall = (paramsId, APIstate=f=>f) => {
         })
         .catch(function (error) {
             console.log(error)
+            ExtDBcall(paramsId, APIstate)
         })
     )
 }

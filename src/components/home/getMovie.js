@@ -35,7 +35,7 @@ class GetMovie extends React.Component {
 
     componentWillMount() { // can't console.log any state here because component isn't mounted yet
         (!this.props.location.locationState.currentUser) ?
-            console.log('props.location undefined') :
+            console.log('props.location undefinedd!!') :
             console.log(this.props.location.locationState.currentUser)
             this.setState({ currentUser: this.props.location.locationState.currentUser })
     }

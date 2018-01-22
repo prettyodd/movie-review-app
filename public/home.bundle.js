@@ -14140,7 +14140,7 @@
 	        key: 'componentWillMount',
 	        value: function componentWillMount() {
 	            // can't console.log any state here because component isn't mounted yet
-	            !this.props.location.locationState.currentUser ? console.log('props.location undefined') : console.log(this.props.location.locationState.currentUser);
+	            !this.props.location.locationState.currentUser ? console.log('props.location undefinedd!!') : console.log(this.props.location.locationState.currentUser);
 	            this.setState({ currentUser: this.props.location.locationState.currentUser });
 	        }
 	    }, {
@@ -14508,7 +14508,7 @@
 	
 	    var c = undefined;
 	
-	    return _axios2.default.post('http://localhost:3000/api/movie/' + paramsId, {
+	    return _axios2.default.post('/api/movie/' + paramsId, {
 	        id: paramsId,
 	        title: movie.title,
 	        overview: movie.overview,
@@ -14567,7 +14567,7 @@
 	
 	    var c = undefined;
 	
-	    return _axios2.default.post('http://localhost:3000/api/movie/' + paramsId + '/reviews', {
+	    return _axios2.default.post('/api/movie/' + paramsId + '/reviews', {
 	        reviews: {
 	            user: username,
 	            review: userReview
@@ -14628,7 +14628,7 @@
 	
 	    var c = undefined;
 	
-	    return _axios2.default.post('http://localhost:3000/api/movie/' + paramsId + '/delete-user-review/' + username, {
+	    return _axios2.default.post('/api/movie/' + paramsId + '/delete-user-review/' + username, {
 	        reviews: {
 	            user: username,
 	            review: userReview
@@ -14680,7 +14680,7 @@
 	    };
 	
 	    var c = undefined;
-	    return _axios2.default.get('http://localhost:3000/api/movie/' + paramsId) // check if movie exist in local database..
+	    return _axios2.default.get('/api/movie/' + paramsId) // check if movie exist in local database..
 	    .then(function (response) {
 	        if (response.data) {
 	            APIstate({ movie: response.data, loading: false });
@@ -14690,6 +14690,7 @@
 	        }
 	    }).catch(function (error) {
 	        console.log(error);
+	        (0, _extDBCall2.default)(paramsId, APIstate);
 	    });
 	};
 	

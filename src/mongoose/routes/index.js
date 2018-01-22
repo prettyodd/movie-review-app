@@ -11,7 +11,8 @@ import {
 
 // mongoose setuo
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://mongo:27017', {
+//mongoose.connect('mongodb://localhost/CRMdb', {    
+mongoose.connect('mongodb://mongo:27017/CRMdb', {
     useMongoClient: true
 });
 

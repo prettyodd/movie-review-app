@@ -5,7 +5,7 @@ const UpdateReview = ( paramsId, movie, username, userReview, APIstate=f=>f ) =>
     let c = this
 
     return (
-        axios.post(`http://localhost:3000/api/movie/${paramsId}/reviews`, {
+        axios.post(`/api/movie/${paramsId}/reviews`, {
             reviews: {
                 user: username,
                 review: userReview

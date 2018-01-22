@@ -6,7 +6,7 @@ const DeleteReview = ( paramsId, movie, username, userReview, APIstate=f=>f ) =>
     let c = this
 
     return (
-        axios.post(`http://localhost:3000/api/movie/${paramsId}/delete-user-review/${username}`, {
+        axios.post(`/api/movie/${paramsId}/delete-user-review/${username}`, {
             reviews: {
                 user: username,
                 review: userReview
