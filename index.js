@@ -23,6 +23,13 @@ app.get('/', (req, res) => {
 app.use('/api', Routes);
 app.use(express.static('public'));
 
+// Serve gzipped file in production
+app.get('*.js', function (req, res, next) {
+    req.url = req.url + '.gz';
+    res.set('Content-Encoding', 'gzip');
+    next();
+});
+
 app.listen(PORT, () =>
     console.log(`your server is running on port ${PORT}`)
 );
