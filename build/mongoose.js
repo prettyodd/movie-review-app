@@ -18,8 +18,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 // mongoose setuo
 _mongoose2.default.Promise = global.Promise;
-_mongoose2.default.connect('mongodb://localhost/CRMdb', {
-    //mongoose.connect('mongodb://mong:27017/miniIMDB', {
+//mongoose.connect('mongodb://localhost/CRMdb', {    
+_mongoose2.default.connect('mongodb://mong:27017/miniIMDB', {
     useMongoClient: true
 });
 

@@ -11,8 +11,8 @@ import {
 
 // mongoose setuo
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/CRMdb', {    
-//mongoose.connect('mongodb://mong:27017/miniIMDB', {
+//mongoose.connect('mongodb://localhost/CRMdb', {    
+mongoose.connect('mongodb://mong:27017/miniIMDB', {
     useMongoClient: true
 });
 
