@@ -1,6 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import Routes from './src/mongoose/routes/';
+import Routes from './mongoose';
 import cors from 'cors';
 
 const app = express();

@@ -7,7 +7,7 @@ import {
     editReview,
     addReview,
     deleteUserReview
-} from '../controllers/userController';
+} from './userController.js';
 
 // mongoose setuo
 mongoose.Promise = global.Promise;
