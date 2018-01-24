@@ -4,6 +4,7 @@ import axios from 'axios';
 import MovieList from './movieList';
 import GetMovie from './getMovie'
 import { Route, Link, Switch } from 'react-router-dom'
+import styles from '../../../style/index.module.css'
 
 class SearchMovie extends React.Component {
     constructor(props) {
@@ -48,9 +49,11 @@ class SearchMovie extends React.Component {
 
     render () {
       return (
-        <div>
-          <input type="text" onChange={this.onChange.bind(this)}/>
-          <MovieList lists={this.state.data} currentUser={this.state.currentUser} />
+        <div style={{ margin: '3rem auto', maxWidth: 750 }}>
+          <span style={{ marginRight: 5 }}>Search movie:</span><input type="text" onChange={this.onChange.bind(this)}/>
+          <div className={styles.bck} style={{ height: 500, overflow: 'scroll', marginTop: 15 }}>
+            <MovieList lists={this.state.data} currentUser={this.state.currentUser} />
+          </div>
         </div>
       )
     }
