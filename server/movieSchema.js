@@ -13,6 +13,9 @@ export const MovieSchema = new Schema({
     overview: {
         type: String
     },
+    poster_path: {
+        type: String
+    },
     reviews: [{
         user: {
             type: String,

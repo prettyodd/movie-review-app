@@ -10,6 +10,7 @@ const LocalDBCall = (paramsId, APIstate=f=>f) => {
             if (response.data) {
                 APIstate({ movie: response.data, loading: false })
                 console.log('request made from local db')
+                console.log(response.data)
             } else {
                 ExtDBcall(paramsId, APIstate)
             }

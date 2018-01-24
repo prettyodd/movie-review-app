@@ -9,6 +9,7 @@ const AddNewMovie = ( paramsId, movie, username, userReview, APIstate=f=>f ) => 
             id: paramsId,
             title: movie.title,
             overview: movie.overview,
+            poster_path: movie.poster_path,
             reviews: [
                 {
                     user: username,

@@ -4,8 +4,8 @@ const Login = ({ currentUser, logOut=f=>f }) => {
 
     return (
         <div>
-        <p>You logged in as: {currentUser}</p>
-        <a onClick={logOut}>Log out</a>
+        <span style={{ marginRight: 10 }} >You logged in as <strong>{currentUser}</strong></span>
+        <span><button onClick={logOut}>Log out</button></span>
         </div>
     )
 }

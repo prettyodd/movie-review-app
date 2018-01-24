@@ -5,6 +5,7 @@ import MovieHeader from './movieHeader'
 import ReviewBody from './reviewBody'
 import Login from './login'
 import LocalDBCall from './api/localDBCall'
+import styles from '../../../style/index.module.css'
 
 class GetMovie extends React.Component {
 
@@ -59,14 +60,16 @@ class GetMovie extends React.Component {
     render () {
         return (
             
-            <div className="App">
-                {this.isLogin()}
-                <Link 
-                  to={{
-                  pathname: `/`,
-                  locationState: { currentUser: this.state.currentUser }}}>
-                  Home
-                </Link>
+            <div style={{ margin: '3rem auto', maxWidth: 750 }}>
+                <div style={{ display: 'flex' }}>
+                    <Link 
+                      to={{
+                      pathname: `/`,
+                      locationState: { currentUser: this.state.currentUser }}}>
+                      <strong>HOME</strong>
+                    </Link>
+                    <span style={{ marginLeft: 'auto', order: 2 }} >{this.isLogin()}</span>
+                </div>
                 {this.loading()}
                 <ReviewBody 
                     paramsId={this.props.match.params.id}
