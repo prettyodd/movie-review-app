@@ -117,7 +117,7 @@ const ReviewBody = ({ paramsId, movie, APIstate=f=>f, currentUser, currentReview
                 <h3 style={{ marginTop: 0 }} >Review list:</h3>
                 {Object.keys(arr).map((key, i) =>
                     <div key={i} className="Movies" style={{ marginBottom: 10 }}>
-                        <span>{arr[key].review} <span style={{ fontSize: 14 }}>by</span> <strong>{arr[key].user}</strong></span>
+                        <span><strong>{arr[key].user}</strong> says: {arr[key].review}</span>
                     </div>
                 )}
             </div>

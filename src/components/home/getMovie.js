@@ -13,7 +13,7 @@ class GetMovie extends React.Component {
         super(props)
         this.state = {
           loading: true,
-          movie: { id: '', title: '', overview: '', reviews: [] },
+          movie: { id: '', title: '', overview: '', poster_path: '', reviews: [] },
           currentUser: '',
           currentReview: '',
           editReview: false,
