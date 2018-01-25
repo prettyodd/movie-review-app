@@ -24,10 +24,12 @@ var MovieSchema = exports.MovieSchema = new Schema({
     overview: {
         type: String
     },
+    poster_path: {
+        type: String
+    },
     reviews: [{
         user: {
-            type: String,
-            unique: true
+            type: String
         },
         review: {
             type: String
